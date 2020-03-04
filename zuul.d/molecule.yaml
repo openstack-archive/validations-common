@@ -1,0 +1,124 @@
+---
+- project-template:
+    check:
+      jobs:
+      - validations-common-centos-7-molecule-advanced_format_512e_support
+      - validations-common-centos-7-molecule-check_latest_packages_version
+      - validations-common-centos-7-molecule-dns
+      - validations-common-centos-7-molecule-haproxy
+      - validations-common-centos-7-molecule-ntp
+      - validations-common-centos-7-molecule-service_status
+      - validations-common-centos-7-molecule-stonith_exists
+      - validations-common-centos-7-molecule-undercloud_cpu
+      - validations-common-centos-7-molecule-undercloud_disk_space
+      - validations-common-centos-7-molecule-undercloud_ram
+      - validations-common-centos-7-molecule-undercloud_selinux_mode
+      - validations-common-centos-7-molecule-validate_selinux
+      - validations-common-centos-7-molecule-xfs_check_ftype
+    gate:
+      jobs:
+      - validations-common-centos-7-molecule-check_latest_packages_version
+      - validations-common-centos-7-molecule-dns
+      - validations-common-centos-7-molecule-haproxy
+      - validations-common-centos-7-molecule-stonith_exists
+      - validations-common-centos-7-molecule-undercloud_cpu
+      - validations-common-centos-7-molecule-undercloud_disk_space
+      - validations-common-centos-7-molecule-undercloud_ram
+      - validations-common-centos-7-molecule-validate_selinux
+    name: validations-common-molecule-jobs
+- job:
+    files:
+    - ^roles/undercloud_selinux_mode/.*
+    name: validations-common-centos-7-molecule-undercloud_selinux_mode
+    parent: validations-common-centos-7-base
+    vars:
+      validations_common_role_name: undercloud_selinux_mode
+    voting: false
+- job:
+    files:
+    - ^roles/ntp/.*
+    name: validations-common-centos-7-molecule-ntp
+    parent: validations-common-centos-7-base
+    vars:
+      validations_common_role_name: ntp
+    voting: false
+- job:
+    files:
+    - ^roles/service_status/.*
+    name: validations-common-centos-7-molecule-service_status
+    parent: validations-common-centos-7-base
+    vars:
+      validations_common_role_name: service_status
+    voting: false
+- job:
+    files:
+    - ^roles/advanced_format_512e_support/.*
+    name: validations-common-centos-7-molecule-advanced_format_512e_support
+    parent: validations-common-centos-7-base
+    vars:
+      validations_common_role_name: advanced_format_512e_support
+    voting: false
+- job:
+    files:
+    - ^roles/dns/.*
+    name: validations-common-centos-7-molecule-dns
+    parent: validations-common-centos-7-base
+    vars:
+      validations_common_role_name: dns
+- job:
+    files:
+    - ^roles/haproxy/.*
+    name: validations-common-centos-7-molecule-haproxy
+    parent: validations-common-centos-7-base
+    vars:
+      validations_common_role_name: haproxy
+- job:
+    files:
+    - ^roles/undercloud_cpu/.*
+    name: validations-common-centos-7-molecule-undercloud_cpu
+    parent: validations-common-centos-7-base
+    vars:
+      validations_common_role_name: undercloud_cpu
+- job:
+    files:
+    - ^roles/undercloud_ram/.*
+    name: validations-common-centos-7-molecule-undercloud_ram
+    parent: validations-common-centos-7-base
+    vars:
+      validations_common_role_name: undercloud_ram
+- job:
+    files:
+    - ^roles/undercloud_disk_space/.*
+    name: validations-common-centos-7-molecule-undercloud_disk_space
+    parent: validations-common-centos-7-base
+    vars:
+      validations_common_role_name: undercloud_disk_space
+- job:
+    files:
+    - ^roles/xfs_check_ftype/.*
+    name: validations-common-centos-7-molecule-xfs_check_ftype
+    parent: validations-common-centos-7-base
+    vars:
+      validations_common_role_name: xfs_check_ftype
+    voting: false
+- job:
+    files:
+    - ^roles/stonith_exists/.*
+    name: validations-common-centos-7-molecule-stonith_exists
+    parent: validations-common-centos-7-base
+    vars:
+      validations_common_role_name: stonith_exists
+- job:
+    files:
+    - ^roles/check_latest_packages_version/.*
+    name: validations-common-centos-7-molecule-check_latest_packages_version
+    parent: validations-common-centos-7-base
+    vars:
+      validations_common_role_name: check_latest_packages_version
+- job:
+    files:
+    - ^roles/validate_selinux/.*
+    name: validations-common-centos-7-molecule-validate_selinux
+    parent: validations-common-centos-7-base
+    vars:
+      validations_common_role_name: validate_selinux
