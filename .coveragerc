@@ -1,0 +1,7 @@
+[run]
+branch = True
+source = validations-common
+omit = validations-common/openstack/*
+
+[report]
+ignore_errors = True
