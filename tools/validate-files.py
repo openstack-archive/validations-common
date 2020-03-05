@@ -66,9 +66,7 @@ for base_path in path_args:
                 if f.endswith('.py') \
                         and not f == '__init__.py' \
                         and subdir in [os.path.join(base_path,
-                                                    'validations',
-                                                    'library'),
-                                       os.path.join(base_path,
+                                                    'validations_common',
                                                     'library')]:
                     file_path = os.path.join(subdir, f)
                     if quiet < 1:

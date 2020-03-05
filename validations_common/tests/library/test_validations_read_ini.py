@@ -23,7 +23,7 @@ Tests for `validations_read_ini` module.
 import os
 import tempfile
 
-import library.validations_read_ini as validation
+import validations_common.library.validations_read_ini as validation
 from validations_common.tests import base
 
 
