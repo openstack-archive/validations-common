@@ -1,0 +1,14 @@
+---
+- hosts: all
+  gather_facts: true
+  vars:
+    metadata:
+      name: Verify if the server fits the CPU core requirements
+      description: >
+        Make sure that the server has enough CPU cores.
+      groups:
+        - prep
+        - pre-introspection
+    minimal_cpu_count: 8
+  roles:
+    - check_cpu

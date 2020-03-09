@@ -1,0 +1,15 @@
+---
+- hosts: all
+  gather_facts: true
+  vars:
+    metadata:
+      name: Verify the server fits the RAM requirements
+      description: >
+        Verify that the server has enough RAM.
+      groups:
+        - prep
+        - pre-introspection
+        - pre-upgrade
+    minimal_ram_gb: 24
+  roles:
+    - check_ram

@@ -1,0 +1,12 @@
+---
+- hosts: all
+  vars:
+    metadata:
+      name: Advanced Format 512e Support
+      description: >
+        Detect whether the node disks use Advanced Format.
+      groups:
+        - prep
+        - pre-deployment
+  roles:
+    - advanced_format_512e_support

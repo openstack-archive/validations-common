@@ -1,0 +1,13 @@
+---
+- hosts: all
+  gather_facts: true
+  vars:
+    metadata:
+      name: SELinux Enforcing Mode Check
+      description: >
+        Check if the server is running SELinux in Enforcing mode.
+      groups:
+        - prep
+        - pre-introspection
+  roles:
+    - check_selinux_mode
