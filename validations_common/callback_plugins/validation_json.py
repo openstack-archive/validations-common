@@ -20,7 +20,7 @@ __metaclass__ = type
 import datetime
 import json
 import time
-import os.path
+import os
 
 from functools import partial
 
@@ -147,7 +147,8 @@ class CallbackModule(CallbackBase):
 
         log_file = "{}/{}_{}_{}.json".format(
             VALIDATIONS_LOG_DIR,
-            self.results[0].get('play').get('id'),
+            (os.getenv('ANSIBLE_UUID') if os.getenv('ANSIBLE_UUID') else
+             self.results[0].get('play').get('id')),
             self.env['playbook_name'],
             self.current_time)
 
