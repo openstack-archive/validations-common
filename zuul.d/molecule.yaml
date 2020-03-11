@@ -26,7 +26,7 @@
     name: validations-common-molecule-jobs
 - job:
     files:
-    - ^roles/check_selinux_mode/.*
+    - ^validations_common/roles/check_selinux_mode/.*
     name: validations-common-centos-8-molecule-check_selinux_mode
     parent: validations-common-centos-8-base
     vars:
@@ -34,7 +34,7 @@
     voting: false
 - job:
     files:
-    - ^roles/ntp/.*
+    - ^validations_common/roles/ntp/.*
     name: validations-common-centos-8-molecule-ntp
     parent: validations-common-centos-8-base
     vars:
@@ -42,7 +42,7 @@
     voting: false
 - job:
     files:
-    - ^roles/service_status/.*
+    - ^validations_common/roles/service_status/.*
     name: validations-common-centos-8-molecule-service_status
     parent: validations-common-centos-8-base
     vars:
@@ -50,7 +50,7 @@
     voting: false
 - job:
     files:
-    - ^roles/advanced_format_512e_support/.*
+    - ^validations_common/roles/advanced_format_512e_support/.*
     name: validations-common-centos-8-molecule-advanced_format_512e_support
     parent: validations-common-centos-8-base
     vars:
@@ -58,42 +58,42 @@
     voting: false
 - job:
     files:
-    - ^roles/dns/.*
+    - ^validations_common/roles/dns/.*
     name: validations-common-centos-8-molecule-dns
     parent: validations-common-centos-8-base
     vars:
       validations_common_role_name: dns
 - job:
     files:
-    - ^roles/haproxy/.*
+    - ^validations_common/roles/haproxy/.*
     name: validations-common-centos-8-molecule-haproxy
     parent: validations-common-centos-8-base
     vars:
       validations_common_role_name: haproxy
 - job:
     files:
-    - ^roles/check_cpu/.*
+    - ^validations_common/roles/check_cpu/.*
     name: validations-common-centos-8-molecule-check_cpu
     parent: validations-common-centos-8-base
     vars:
       validations_common_role_name: check_cpu
 - job:
     files:
-    - ^roles/check_ram/.*
+    - ^validations_common/roles/check_ram/.*
     name: validations-common-centos-8-molecule-check_ram
     parent: validations-common-centos-8-base
     vars:
       validations_common_role_name: check_ram
 - job:
     files:
-    - ^roles/check_disk_space/.*
+    - ^validations_common/roles/check_disk_space/.*
     name: validations-common-centos-8-molecule-check_disk_space
     parent: validations-common-centos-8-base
     vars:
       validations_common_role_name: check_disk_space
 - job:
     files:
-    - ^roles/xfs_check_ftype/.*
+    - ^validations_common/roles/xfs_check_ftype/.*
     name: validations-common-centos-8-molecule-xfs_check_ftype
     parent: validations-common-centos-8-base
     vars:
@@ -101,14 +101,14 @@
     voting: false
 - job:
     files:
-    - ^roles/check_latest_packages_version/.*
+    - ^validations_common/roles/check_latest_packages_version/.*
     name: validations-common-centos-8-molecule-check_latest_packages_version
     parent: validations-common-centos-8-base
     vars:
       validations_common_role_name: check_latest_packages_version
 - job:
     files:
-    - ^roles/validate_selinux/.*
+    - ^validations_common/roles/validate_selinux/.*
     name: validations-common-centos-8-molecule-validate_selinux
     parent: validations-common-centos-8-base
     vars:

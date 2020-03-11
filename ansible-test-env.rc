@@ -1,0 +1,25 @@
+export VALIDATIONS_COMMON_WORKPATH="$(dirname $(readlink -f ${BASH_SOURCE[0]}))"
+export ANSIBLE_STDOUT_CALLBACK=debug
+export ANSIBLE_CALLBACK_PLUGINS="${VALIDATIONS_COMMON_WORKPATH}/validations_common/callback_plugins"
+export ANSIBLE_LIBRARY="${VALIDATIONS_COMMON_WORKPATH}/validations_common/library"
+
+# TODO(gchamoul): uncomment once we host lookup plugins
+#export ANSIBLE_LOOKUP_PLUGINS="${VALIDATIONS_COMMON_WORKPATH}/validations_common/lookup_plugins"
+
+export ANSIBLE_ROLES_PATH="${VALIDATIONS_COMMON_WORKPATH}/validations_common/roles"
+export ANSIBLE_INVENTORY="${VALIDATIONS_COMMON_WORKPATH}/tests/hosts.ini"
+export ANSIBLE_RETRY_FILES_ENABLED="0"
+export ANSIBLE_LOAD_CALLBACK_PLUGINS="1"
+export ANSIBLE_HOST_KEY_CHECKING=False
+
+function unset-ansible-test-env {
+  for i in $(env | grep ANSIBLE_ | awk -F'=' '{print $1}'); do
+    unset ${i}
+  done
+  unset VALIDATIONS_COMMON_WORKPATH
+  echo -e "Ansible test environment deactivated.\n"
+  unset -f unset-ansible-test-env
+}
+
+echo -e "Ansible test environment is now active"
+echo -e "Run 'unset-ansible-test-env' to deactivate.\n"
