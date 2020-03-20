@@ -1,14 +1,13 @@
 - project:
     templates:
-    - openstack-python3-ussuri-jobs
-    - validations-common-molecule-jobs
-    - check-requirements
-    - release-notes-jobs-python3
+      - check-requirements
+      - openstack-python3-ussuri-jobs
+      - openstack-lower-constraints-jobs
+      - release-notes-jobs-python3
+      - validations-common-molecule-jobs
     check:
       jobs:
-      - openstack-tox-linters
-      - openstack-tox-lower-constraints
+        - openstack-tox-linters
     gate:
       jobs:
-      - openstack-tox-linters
-      - openstack-tox-lower-constraints
+        - openstack-tox-linters
