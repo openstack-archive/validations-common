@@ -75,7 +75,8 @@ class CallbackModule(CallbackBase):
                 'host': play.get_name(),
                 'validation_id': self.env['playbook_name'],
                 'validation_path': self.env['playbook_path'],
-                'id': str(play._uuid),
+                'id': (os.getenv('ANSIBLE_UUID') if os.getenv('ANSIBLE_UUID')
+                       else str(play._uuid)),
                 'duration': {
                     'start': current_time()
                 }
