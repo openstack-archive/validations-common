@@ -23,7 +23,10 @@ Tests for `reportentry` module.
 import validations_common.library.reportentry as validation
 from validations_common.tests import base
 
-from unittest import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 reason = "Reason #1"
 recommendation = ['Recommendation #1']
