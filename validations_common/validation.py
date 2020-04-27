@@ -13,7 +13,11 @@
 #   WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #   License for the specific language governing permissions and limitations
 #   under the License.
+"""
+Uses `validations_libs`_.
 
+.. _validations_libs: https://opendev.org/openstack/validations-libs
+"""
 import argparse
 import json
 import logging

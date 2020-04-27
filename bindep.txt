@@ -41,4 +41,8 @@ libsemanage-python3 [platform:redhat !platform:rhel-7 !platform:centos-7]
 gzip
 
 # Required to build language docs
-gettext
+gettext             [doc test]
+graphviz            [doc test]
+# libsrvg2 is needed for sphinxcontrib-svg2pdfconverter in docs builds.
+librsvg2-tools      [doc platform:rpm]
+librsvg2-bin        [doc platform:dpkg]

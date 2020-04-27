@@ -33,6 +33,7 @@
 
 - project:
     templates:
+      - check-requirements
       - openstack-python3-victoria-jobs
       - validations-common-molecule-jobs
     check:
@@ -40,11 +41,18 @@
         - openstack-tox-linters
         - openstack-tox-cover
         - validations-common-functional
+        - openstack-tox-docs: &tripleo-docs
+            files:
+              - ^doc/.*
+              - ^README.rst
     gate:
       jobs:
         - openstack-tox-linters
         - validations-common-functional
-
+        - openstack-tox-docs: *tripleo-docs
+    promote:
+      jobs:
+        - promote-openstack-tox-docs: *tripleo-docs
 - project-template:
     check:
       jobs:
