@@ -1,0 +1,18 @@
+---
+- hosts: all
+  vars:
+    metadata:
+      name: Verify server fits the disk space requirements to perform an upgrade
+      description: >
+        Make sure that the root partition on the server node has enough
+        free space before starting an upgrade
+      groups:
+        - pre-upgrade
+    volumes:
+      - {mount: /var/lib/docker, min_size: 10}
+      - {mount: /var/lib/config-data, min_size: 3}
+      - {mount: /var, min_size: 16}
+      - {mount: /, min_size: 20}
+
+  roles:
+    - check_disk_space
