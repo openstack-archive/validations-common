@@ -15,6 +15,7 @@
 #   under the License.
 
 import argparse
+import json
 import logging
 from prettytable import PrettyTable
 
@@ -75,6 +76,9 @@ class Validation(argparse.ArgumentParser):
                             default=constants.DEFAULT_VALIDATIONS_BASEDIR,
                             help=("Path where the ansible roles, library "
                                   "and plugins is located."))
+        parser.add_argument('--output-log', dest='output_log',
+                            default=None,
+                            help=("Path where the run result will be stored"))
         return parser.parse_args()
 
     def _print_dict_table(self, data):
@@ -128,6 +132,12 @@ class Validation(argparse.ArgumentParser):
         else:
             raise RuntimeError("Wrong data type.")
 
+    def _write_output(self, output_log, results):
+        """Write output log file as Json format"""
+        with open(output_log, 'w') as output:
+            output.write(json.dumps({'results': results}, indent=4,
+                                    sort_keys=True))
+
     def take_action(self, parsed_args):
         """Take validation action"""
         # Get parameters:
@@ -149,15 +159,24 @@ class Validation(argparse.ArgumentParser):
                 base_dir=ansible_base_dir,
                 quiet=quiet)
             if results:
-                self._print_dict_table(results)
+                if parsed_args.output_log:
+                    self._write_output(parsed_args.output_log, results)
+                else:
+                    self._print_dict_table(results)
         elif 'list' in action:
             results = v_actions.list_validations()
             if results:
-                self._print_tuple_table(results)
+                if parsed_args.output_log:
+                    self._write_output(parsed_args.output_log, results)
+                else:
+                    self._print_tuple_table(results)
         elif 'show' in action:
             results = v_actions.show_history(validation_name)
             if results:
-                self._print_tuple_table(data=results, status_col=2)
+                if parsed_args.output_log:
+                    self._write_output(parsed_args.output_log, results)
+                else:
+                    self._print_tuple_table(data=results, status_col=2)
         else:
             msg = "Unknown Action: {}".format(action)
             raise RuntimeError(msg)
