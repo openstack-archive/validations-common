@@ -156,8 +156,7 @@ class CallbackModule(CallbackBase):
                                 sort_keys=True))
 
     def _record_task_result(self, on_info, result, **kwargs):
-        """This function is used as a partial to add
-           failed/skipped info in a single method
+        """This function is used as a partial to add info in a single method
         """
         host = result._host
         task = result._task
@@ -177,9 +176,10 @@ class CallbackModule(CallbackBase):
 
         end_time = current_time()
         time_elapsed = secondsToStr(time.time() - self.t0)
-        self.results[-1]['tasks'][-1]['task']['duration']['end'] = end_time
-        self.results[-1]['play']['duration']['end'] = end_time
-        self.results[-1]['play']['duration']['time_elapsed'] = time_elapsed
+        for result in self.results:
+            result['tasks'][-1]['task']['duration']['end'] = end_time
+            result['play']['duration']['end'] = end_time
+            result['play']['duration']['time_elapsed'] = time_elapsed
 
     def __getattribute__(self, name):
         """Return ``_record_task_result`` partial with a dict
@@ -192,7 +192,6 @@ class CallbackModule(CallbackBase):
         on = name.rsplit('_', 1)[1]
 
         on_info = {}
-        if on in ('failed', 'skipped'):
-            on_info[on] = True
+        on_info[on] = True
 
         return partial(self._record_task_result, on_info)
