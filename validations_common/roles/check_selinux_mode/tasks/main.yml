@@ -5,22 +5,25 @@
   register: sestatus
   changed_when: false
   when:
-    - "ansible_os_family == 'RedHat'"
+    - "ansible_os_family is defined and ansible_os_family == 'RedHat'"
 
-- name: Fail if SELinux is not in Enforced mode (RHEL)
-  fail:
-    msg: >-
-      SELinux is running in {{ sestatus.stdout }} mode on the Undercloud.
-      Ensure that SELinux is enabled and running in Enforcing mode.
-  when:
-    - "sestatus.stdout != 'Enforcing'"
-    - "ansible_distribution == 'RedHat'"
+- name: Check sestatus
+  block:
+    - name: Fail if SELinux is not in Enforced mode (RHEL)
+      fail:
+        msg: >-
+          SELinux is running in {{ sestatus.stdout }} mode on the Undercloud.
+          Ensure that SELinux is enabled and running in Enforcing mode.
+      when:
+        - "sestatus.stdout != 'Enforcing'"
+        - "ansible_distribution == 'RedHat'"
 
-- name: Warn if SELinux is not in Enforced mode (CentOS)
-  warn:
-    msg: >-
-      SELinux is running in {{ sestatus.stdout }} mode on the Undercloud.
-      Ensure that SELinux is enabled and running in Enforcing mode.
-  when:
-    - "sestatus.stdout != 'Enforcing'"
-    - "ansible_distribution == 'CentOS'"
+    - name: Warn if SELinux is not in Enforced mode (CentOS)
+      warn:
+        msg: >-
+          SELinux is running in {{ sestatus.stdout }} mode on the Undercloud.
+          Ensure that SELinux is enabled and running in Enforcing mode.
+      when:
+        - "sestatus.stdout != 'Enforcing'"
+        - "ansible_distribution == 'CentOS'"
+  when: sestatus.stdout is defined

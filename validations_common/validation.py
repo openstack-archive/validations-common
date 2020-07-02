@@ -59,8 +59,11 @@ class Validation(argparse.ArgumentParser):
                             choices=['run', 'list', 'show'],
                             help='Validation Action')
         parser.add_argument('--inventory', '-i', type=str,
-                            help=('Path of the Ansible inventory.'))
-
+                            default="localhost",
+                            help="Path of the Ansible inventory.")
+        parser.add_argument('--extra-vars', action='store',
+                            nargs='+',
+                            help="Extra ansible variables")
         parser.add_argument('--validation', '-v',
                             metavar='<validation_id>[,<validation_id>,...]',
                             dest="validation_name",
@@ -164,7 +167,13 @@ class Validation(argparse.ArgumentParser):
         quiet = parsed_args.quiet
         validation_dir = parsed_args.validation_dir
         ansible_base_dir = parsed_args.ansible_base_dir
-
+        extra_vars = parsed_args.extra_vars
+        if extra_vars:
+            try:
+                extra_vars = dict(e.split("=") for e in parsed_args.extra_vars)
+            except ValueError:
+                msg = "extra vars option should be formed as: KEY=VALUE."
+                raise RuntimeError(msg)
         v_actions = ValidationActions(validation_path=validation_dir,
                                       group=group)
         if 'run' in action:
@@ -174,6 +183,7 @@ class Validation(argparse.ArgumentParser):
                     group=group,
                     validation_name=validation_name,
                     base_dir=ansible_base_dir,
+                    extra_vars=extra_vars,
                     quiet=quiet)
             except RuntimeError as e:
                 sys.exit(e)

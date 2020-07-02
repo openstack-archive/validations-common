@@ -17,6 +17,7 @@ command:
       {{ val_exec }} run --group prep --validation-dir {{ validation_dir }}
       --ansible-base-dir {{ ansible_dir }}
       --output-log {{ log_dir }}/run-group.log
+      --extra-vars minimal_ram_gb=7
   - output: "{{ log_dir }}/list.log"
     command: >-
       {{ val_exec }} list --validation-dir {{ validation_dir }}
