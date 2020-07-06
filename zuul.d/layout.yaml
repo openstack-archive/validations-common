@@ -7,25 +7,7 @@
       - validations-common-molecule-jobs
     check:
       jobs:
-      - openstack-tox-linters: &tripleo-linters
-          nodeset: centos-8
-      - tripleo-ci-centos-8-containers-multinode: &containers_multinode
-          dependencies: &deps
-            - openstack-tox-linters
-          files: &containers_files
-          - ^validations_common/.*
-          irrelevant-files: &irrelevant_scenario_files
-          - .*.md$
-          - .*.rst$
-          - .*.txt$
-          - ^validations_common/.*molecule.*
-          - ^validations_common/tests/.*
-      - tripleo-ci-centos-8-standalone: &basic_standalone
-          dependencies: *deps
-          files: *containers_files
-          irrelevant-files: *irrelevant_scenario_files
+        - openstack-tox-linters
     gate:
       jobs:
-      - openstack-tox-linters: *tripleo-linters
-      - tripleo-ci-centos-8-containers-multinode: *containers_multinode
-      - tripleo-ci-centos-8-standalone: *basic_standalone
+        - openstack-tox-linters
