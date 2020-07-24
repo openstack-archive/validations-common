@@ -1,0 +1,26 @@
+---
+- name: Execute validation commands
+  shell:
+    cmd: "{{ validation_command }}"
+    executable: /bin/bash
+
+- name: Get run results
+  register: result
+  shell:
+    cmd: "cat {{ val_output }}"
+    executable: /bin/bash
+
+- name: Get json data
+  set_fact:
+    jsondata: "{{ result.stdout | from_json }}"
+
+- name: Get Validations Status
+  set_fact:
+    status: "{{ jsondata | json_query(jsonres) }}"
+  vars:
+    jsonres: 'results[*].Status'
+
+- fail:
+    msg: "Validation failed: some of the validations has failed."
+  when: item != "PASSED"
+  loop: "{{ status }}"

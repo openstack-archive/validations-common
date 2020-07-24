@@ -1,0 +1,25 @@
+---
+- name: Ensure local output dirs
+  delegate_to: localhost
+  file:
+    path: "{{ vf_output_dir }}"
+    state: directory
+  with_items:
+    - "{{ log_path }}/validations-logs"
+    - "{{ zuul.executor.work_root }}/artifacts"
+  loop_control:
+    loop_var: vf_output_dir
+
+- name: Collect logs and artifacts
+  synchronize:
+    dest: "{{ vf_output.dest }}/"
+    mode: pull
+    src: "{{ output_dir }}/{{ vf_output.src }}/"
+    verify_host: true
+    owner: false
+    group: false
+  loop:
+    - dest: "{{ log_path }}/validations-logs"
+      src: "logs"
+  loop_control:
+    loop_var: vf_output

@@ -1,0 +1,4 @@
+---
+src_dir: "{{ zuul.project.src_dir }}"
+output_dir: "{{ ansible_user_dir }}"
+log_path: "{{ zuul.executor.log_root }}"

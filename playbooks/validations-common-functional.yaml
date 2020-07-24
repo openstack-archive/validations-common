@@ -1,0 +1,14 @@
+---
+- hosts: tempest
+  name: validations-common-functional
+  roles:
+    - ensure-tox
+    - ensure-pip
+    - ensure-virtualenv
+    - role: ensure-if-python
+      vars:
+        zuul_work_dir: "src/opendev.org/openstack/validations-libs"
+    - role: ensure-if-python
+      vars:
+        zuul_work_dir: "src/opendev.org/openstack/validations-common"
+    - role: validations

@@ -1,0 +1,30 @@
+---
+- name: Make sure Validations Log dir exists
+  become: true
+  file:
+    path: "{{ vf_log_dir }}"
+    state: directory
+    mode: "0755"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    recurse: true
+
+# @matbu: TODO make the /var/log/validations as a parameter
+# We should be able to write validation logs outside of the /var/log path
+# This statement will have to be remove then.
+- name: Create Validations log symlink
+  file:
+    src: "{{ vf_log_dir }}"
+    dest: "{{ log_dir }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: link
+
+# @matbu: TODO make ansible-runner depends on Ansible
+- name: Install Ansible
+  pip:
+    name: ansible
+    virtualenv: "{{ zuul_work_virtualenv }}"
+
+- include: validations.yaml validation_command="{{ item.command }}" val_output="{{ item.output }}"
+  loop: "{{command}}"

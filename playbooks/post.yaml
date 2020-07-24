@@ -1,0 +1,10 @@
+---
+- hosts: all
+  vars:
+    tox_envlist: functional
+  roles:
+    - fetch-subunit-output
+    - fetch-devstack-log-dir
+    - fetch-output
+    - fetch_validations
+    - fetch-python-sdist-output
