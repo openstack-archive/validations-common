@@ -1,8 +1,8 @@
 ---
 log_dir: "{{ ansible_user_dir }}/logs"
 zuul_work_virtualenv: "{{ ansible_user_dir }}/.venv"
-ansible_dir: "{{ zuul_work_virtualenv }}/share/validations-common"
-validation_dir: "{{ zuul_work_virtualenv }}/share/validations-common/playbooks"
+ansible_dir: "{{ zuul_work_virtualenv }}/share/ansible/"
+validation_dir: "{{ zuul_work_virtualenv }}/share/ansible/validation-playbooks"
 vf_log_dir: "/var/log/validations"
 val_exec: "source {{ zuul_work_virtualenv }}/bin/activate; validation.py"
 command:
