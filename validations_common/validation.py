@@ -17,6 +17,8 @@
 import argparse
 import json
 import logging
+import sys
+
 from prettytable import PrettyTable
 
 from validations_libs.validation_actions import ValidationActions
@@ -29,6 +31,16 @@ RED = "\033[1;31m"
 GREEN = "\033[0;32m"
 CYAN = "\033[36m"
 RESET = "\033[0;0m"
+
+
+class _CommaListGroupAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, values.split(','))
+
+
+class _CommaListAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, values.split(','))
 
 
 class Validation(argparse.ArgumentParser):
@@ -52,6 +64,7 @@ class Validation(argparse.ArgumentParser):
         parser.add_argument('--validation', '-v',
                             metavar='<validation_id>[,<validation_id>,...]',
                             dest="validation_name",
+                            action=_CommaListAction,
                             default=[],
                             help=("Run specific validations, "
                                   "if more than one validation is required "
@@ -60,13 +73,14 @@ class Validation(argparse.ArgumentParser):
                                   "--validation 512e"))
         parser.add_argument('--group', '-g',
                             metavar='<group>[,<group>,...]',
+                            action=_CommaListGroupAction,
                             default=[],
                             help=("Run specific group validations, "
                                   "if more than one group is required "
                                   "separate the group names with commas: "
                                   "--group pre-upgrade,prep | "
                                   "--group openshift-on-openstack"))
-        parser.add_argument('--quiet', action='store', default=False,
+        parser.add_argument('--quiet', action='store_true',
                             help=("Run Ansible in silent mode."))
         parser.add_argument('--validation-dir', dest='validation_dir',
                             default=constants.ANSIBLE_VALIDATION_DIR,
@@ -87,6 +101,7 @@ class Validation(argparse.ArgumentParser):
         # Set Field name by getting the result dict keys
         try:
             t.field_names = data[0].keys()
+            t.align = 'l'
         except KeyError:
             raise KeyError()
         for r in data:
@@ -112,6 +127,7 @@ class Validation(argparse.ArgumentParser):
             t = PrettyTable(border=True, header=True, padding_width=1)
             try:
                 t.field_names = data[0]
+                t.align = 'l'
             except KeyError:
                 raise KeyError()
             for r in data[1]:
@@ -152,12 +168,15 @@ class Validation(argparse.ArgumentParser):
         v_actions = ValidationActions(validation_path=validation_dir,
                                       group=group)
         if 'run' in action:
-            results = v_actions.run_validations(
-                inventory=inventory,
-                group=group,
-                validation_name=validation_name,
-                base_dir=ansible_base_dir,
-                quiet=quiet)
+            try:
+                results = v_actions.run_validations(
+                    inventory=inventory,
+                    group=group,
+                    validation_name=validation_name,
+                    base_dir=ansible_base_dir,
+                    quiet=quiet)
+            except RuntimeError as e:
+                sys.exit(e)
             if results:
                 if parsed_args.output_log:
                     self._write_output(parsed_args.output_log, results)
@@ -180,6 +199,7 @@ class Validation(argparse.ArgumentParser):
         else:
             msg = "Unknown Action: {}".format(action)
             raise RuntimeError(msg)
+
 
 if __name__ == "__main__":
     validation = Validation()
