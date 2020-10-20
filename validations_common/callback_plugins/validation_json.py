@@ -171,7 +171,7 @@ class CallbackModule(CallbackBase):
             self.simple_results.append(self._val_task(task.name))
             self.simple_results[-1]['task']['status'] = "FAILED"
             self.simple_results[-1]['task']['hosts'][host.name] = task_result
-        if 'warnings' in task_result.keys():
+        if 'warnings' in task_result.keys() and task_result.get('warnings'):
             self.simple_results.append(self._val_task(task.name))
             self.simple_results[-1]['task']['status'] = "WARNING"
             self.simple_results[-1]['task']['hosts'][host.name] = task_result
