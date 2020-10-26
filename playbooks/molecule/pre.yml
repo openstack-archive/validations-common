@@ -85,5 +85,3 @@
 
         - name: Reset ssh connection
           meta: reset_connection
-  roles:
-    - role: ensure-docker
