@@ -26,12 +26,12 @@ from ansible.plugins.callback import CallbackBase
 
 DOCUMENTATION = '''
     callback: json
-    short_description: Ansible screen output as JSON file
+    short_description: Log Ansible results on filesystem
     version_added: "1.0"
     description:
         - This callback converts all events into a JSON file
           stored in /var/log/validations
-    type: stdout
+    type: agregate
     requirements: None
 '''
 
@@ -56,7 +56,7 @@ def secondsToStr(t):
 
 class CallbackModule(CallbackBase):
     CALLBACK_VERSION = 2.0
-    CALLBACK_TYPE = 'stdout'
+    CALLBACK_TYPE = 'agregate'
     CALLBACK_NAME = 'validation_json'
 
     def __init__(self, display=None):
