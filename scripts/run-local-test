@@ -15,16 +15,25 @@
 # under the License.
 
 
-## Shell Opts ----------------------------------------------------------------
-
-set -o pipefail
-set -xeuo
+## Functions -----------------------------------------------------------------
+function usage {
+    echo "Usage: ROLE_NAME=ROLE_NAME ${0##*/} or ${0##*/} ROLE_NAME"
+}
 
 ## Vars ----------------------------------------------------------------------
 
 export PROJECT_DIR="$(dirname $(readlink -f ${BASH_SOURCE[0]}))/../"
+if [ "${ROLE_NAME}x" = "x" -a "${1}x" = "x" ]; then
+    usage;
+    exit 2
+fi
 export ROLE_NAME="${ROLE_NAME:-$1}"
-export TRIPLEO_JOB_ANSIBLE_ARGS=${TRIPLEO_JOB_ANSIBLE_ARGS:-"-v"}
+export TRIPLEO_JOB_ANSIBLE_ARGS=${TRIPLEO_JOB_ANSIBLE_ARGS:-""}
+
+## Shell Opts ----------------------------------------------------------------
+
+set -o pipefail
+set -xeuo
 
 ## Main ----------------------------------------------------------------------
 
@@ -47,8 +56,11 @@ sudo touch /etc/ci/mirror_info.sh
 # Create a virtual env
 "${PYTHON_EXEC}" -m virtualenv --system-site-packages "${HOME}/test-python"
 
+# Activate a virtual env
+PS1="[\u@\h \W]\$" source "${HOME}/test-python/bin/activate"
+
 # Run bindep
-"${HOME}/test-python/bin/pip" install pip setuptools bindep --upgrade
+"${HOME}/test-python/bin/pip" install "pip>=19.1.1" setuptools bindep --upgrade
 "${PROJECT_DIR}/scripts/bindep-install"
 
 # Install local requirements
@@ -61,7 +73,6 @@ fi
                               -r "${PROJECT_DIR}/molecule-requirements.txt"
 
 # Run local test
-PS1="[\u@\h \W]\$" source "${HOME}/test-python/bin/activate"
 source "${PROJECT_DIR}/ansible-test-env.rc"
 export ANSIBLE_ROLES_PATH="${ANSIBLE_ROLES_PATH}:${HOME}/zuul-jobs/roles"
 ansible-playbook -i "${PROJECT_DIR}/tests/hosts.ini" \
@@ -71,4 +82,5 @@ ansible-playbook -i "${PROJECT_DIR}/tests/hosts.ini" \
                  -e "ansible_user=${USER}" \
                  -e "ansible_user_dir=${HOME}" \
                  "${PROJECT_DIR}/tests/prepare-test-host.yml" \
-                 "${PROJECT_DIR}/playbooks/molecule/run-local.yml"
+                 "${PROJECT_DIR}/playbooks/molecule/run-local.yml" \
+                 -v

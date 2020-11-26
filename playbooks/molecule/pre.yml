@@ -1,6 +1,10 @@
 ---
 - hosts: all
   pre_tasks:
+    - name: Set project path fact
+      set_fact:
+        validations_common_project_path: "{{ ansible_user_dir }}/{{ zuul.projects['opendev.org/openstack/validations-common'].src_dir }}"
+
     - name: Ensure output dirs
       file:
         path: "{{ ansible_user_dir }}/zuul-output/logs"
@@ -18,18 +22,25 @@
       pip:
         name: "bindep"
         virtualenv: "{{ ansible_user_dir }}/test-python"
+        virtualenv_command: "{{ ensure_pip_virtualenv_command }}"
         virtualenv_site_packages: true
 
     - name: Run bindep
       shell: |-
         . {{ ansible_user_dir }}/test-python/bin/activate
-        {{ ansible_user_dir }}/{{ zuul.project.src_dir }}/scripts/bindep-install
+        {{ validations_common_project_path }}/scripts/bindep-install
       become: true
       changed_when: false
 
+    - name: Ensure a recent version of pip is installed in virtualenv
+      pip:
+        name: "pip>=19.1.1"
+        virtualenv: "{{ ansible_user_dir }}/test-python"
+        virtualenv_command: "{{ ensure_pip_virtualenv_command }}"
+
     - name: Setup test-python
       pip:
-        requirements: "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/molecule-requirements.txt"
+        requirements: "{{ validations_common_project_path }}/molecule-requirements.txt"
         virtualenv: "{{ ansible_user_dir }}/test-python"
         virtualenv_command: "{{ ensure_pip_virtualenv_command }}"
         virtualenv_site_packages: true
@@ -75,6 +86,18 @@
               * soft nproc 2048
               * hard nproc 4096
             dest: /etc/security/limits.d/containers.conf
+
+        - name: Install epel-release
+          package:
+            name: epel-release
+            state: present
+
+        - name: Be sure to enable epel repo
+          become: true
+          command: >-
+            dnf config-manager --set-enabled epel
+          args:
+            warn: false
 
         - name: Copy repos directory to opt workspace
           copy:

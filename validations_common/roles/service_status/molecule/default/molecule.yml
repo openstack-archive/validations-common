@@ -12,7 +12,7 @@ platforms:
       url: registry.access.redhat.com
     dockerfile: Dockerfile
     command: /sbin/init
-    pkg_extras: python*-setuptools python*-enum34 python*-netaddr ruby python*-PyYAML
+    pkg_extras: python*-setuptools python*-pyyaml
     volumes:
       - /etc/ci/mirror_info.sh:/etc/ci/mirror_info.sh:ro
       - /etc/pki/rpm-gpg:/etc/pki/rpm-gpg
@@ -35,7 +35,7 @@ provisioner:
   log: true
   env:
     ANSIBLE_STDOUT_CALLBACK: yaml
-    ANSIBLE_LIBRARY: "../../../../library"
+    ANSIBLE_LIBRARY: "${ANSIBLE_LIBRARY:-/usr/share/ansible/plugins/modules}"
 
 scenario:
   test_sequence:
