@@ -53,11 +53,11 @@
 
 - name: Fetch denials from auditlog
   become: true
-  ignore_errors: true
+  failed_when: false
   changed_when: false
   shell: |
     set -o pipefail
-    grep denied {{ validate_selinux_audit_source }} > /tmp/denials.log
+    grep -i denied {{ validate_selinux_audit_source }} > /tmp/denials.log || (echo "No denials found in auditlog"; exit 0)
 
 - name: Get stat for denials.log
   stat:
