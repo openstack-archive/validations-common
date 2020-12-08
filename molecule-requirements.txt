@@ -1,8 +1,6 @@
 # this is required for the molecule jobs
 ansible
 ansi2html
-# https://github.com/sqlalchemy/dogpile.cache/issues/178
-dogpile.cache>=0.6.5,<0.9.1  # MIT
 pytest
 pytest-cov
 pytest-html

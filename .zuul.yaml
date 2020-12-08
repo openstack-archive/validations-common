@@ -33,8 +33,6 @@
 
 - project:
     templates:
-      - check-requirements
-      - openstack-lower-constraints-jobs
       - openstack-python3-victoria-jobs
       - validations-common-molecule-jobs
     check:
