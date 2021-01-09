@@ -179,7 +179,8 @@ class CallbackModule(CallbackBase):
         end_time = current_time()
         time_elapsed = secondsToStr(time.time() - self.t0)
         for result in self.results:
-            result['tasks'][-1]['task']['duration']['end'] = end_time
+            if len(result['tasks']) > 1:
+                result['tasks'][-1]['task']['duration']['end'] = end_time
             result['play']['duration']['end'] = end_time
             result['play']['duration']['time_elapsed'] = time_elapsed
 
