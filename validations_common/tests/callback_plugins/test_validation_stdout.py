@@ -91,7 +91,7 @@ class TestValidationStdout(base.TestCase):
         """
 
         self.assertEqual(callback.env, {})
-        self.assertIsNone(callback.t0)
+        self.assertIsNone(callback.start_time)
         """
         Callback time sanity check only verifies general format
         of the stored time to be  iso format `YYYY-MM-DD HH:MM:SS.mmmmmm`

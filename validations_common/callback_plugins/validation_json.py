@@ -68,7 +68,7 @@ class CallbackModule(CallbackBase):
         self.results = []
         self.simple_results = []
         self.env = {}
-        self.t0 = None
+        self.start_time = None
         self.current_time = current_time()
 
     def _new_play(self, play):
@@ -115,7 +115,7 @@ class CallbackModule(CallbackBase):
         }
 
     def v2_playbook_on_start(self, playbook):
-        self.t0 = time.time()
+        self.start_time = time.time()
         pl = playbook._file_name
         validation_id = os.path.splitext(os.path.basename(pl))[0]
         self.env = {
@@ -181,7 +181,7 @@ class CallbackModule(CallbackBase):
             self.simple_results[-1]['task']['hosts'][host.name] = task_result
 
         end_time = current_time()
-        time_elapsed = secondsToStr(time.time() - self.t0)
+        time_elapsed = secondsToStr(time.time() - self.start_time)
         for result in self.results:
             if len(result['tasks']) > 1:
                 result['tasks'][-1]['task']['duration']['end'] = end_time

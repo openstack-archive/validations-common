@@ -90,7 +90,7 @@ class TestValidationJson(base.TestCase):
         self.assertEqual(callback.results, [])
         self.assertEqual(callback.simple_results, [])
         self.assertEqual(callback.env, {})
-        self.assertIsNone(callback.t0)
+        self.assertIsNone(callback.start_time)
         """
         Callback time sanity check only verifies general format
         of the stored time to be  iso format `YYYY-MM-DD HH:MM:SS.mmmmmm`
@@ -396,7 +396,7 @@ class TestValidationJson(base.TestCase):
         callback = validation_json.CallbackModule()
         callback.results = callback_results
         callback.simple_results = callback_simple_results
-        callback.t0 = 0
+        callback.start_time = 0
 
         callback._record_task_result(mock_on_info, mock_result)
 

@@ -52,7 +52,7 @@ class CallbackModule(CallbackBase):
     def __init__(self, display=None):
         super(CallbackModule, self).__init__(display)
         self.env = {}
-        self.t0 = None
+        self.start_time = None
         self.current_time = current_time()
 
     def _new_play(self, play):
