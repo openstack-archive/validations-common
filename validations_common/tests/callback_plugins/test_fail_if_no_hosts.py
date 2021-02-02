@@ -22,7 +22,11 @@ Tests for `fail_if_no_hosts` callback plugin.
 
 
 import validations_common.library.reportentry as validation
+from validations_common.callback_plugins import fail_if_no_hosts
 from validations_common.tests import base
+
+from ansible.plugins.callback import CallbackBase
+from ansible.executor.stats import AggregateStats
 
 from unittest import mock
 
@@ -30,4 +34,59 @@ from unittest import mock
 class TestFailIfNoHosts(base.TestCase):
     def setUp(self):
         super(TestFailIfNoHosts, self).setUp()
-        self.module = mock.MagicMock()
+
+    def test_callback_instantiation(self):
+        """
+        Verifying that the CallbackModule is instantiated properly.
+
+        Test checks presence of CallbackBase in the inheritance chain,
+        in order to ensure that
+        """
+        callback = fail_if_no_hosts.CallbackModule()
+
+        self.assertEqual(type(callback).__mro__[1], CallbackBase)
+
+        self.assertIn('CALLBACK_NAME', dir(callback))
+        self.assertIn('CALLBACK_VERSION', dir(callback))
+
+        self.assertEqual(callback.CALLBACK_NAME, 'fail_if_no_hosts')
+        self.assertIsInstance(callback.CALLBACK_VERSION, float)
+
+    @mock.patch('sys.exit', autospec=True)
+    def test_callback_playbook_on_stats_no_hosts(self, mock_exit):
+        """
+        Following test concerns stats, an instance of AggregateStats
+        and how it's processed by the callback.
+
+        When the v2_playbook_on_stats method of the callback is called,
+        a number of hosts in the stats.processed dictionary is checked.
+        If there are no hosts in the stats.processed dictionary,
+        the callback calls sys.exit.
+        """
+        callback = fail_if_no_hosts.CallbackModule()
+        stats = AggregateStats()
+
+        callback.v2_playbook_on_stats(stats)
+        mock_exit.assert_called_once_with(10)
+
+    @mock.patch('sys.exit', autospec=True)
+    def test_callback_playbook_on_stats_some_hosts(self, mock_exit):
+        """
+        Following test concerns stats, an instance of AggregateStats
+        and how it's processed by the callback.
+
+        When the v2_playbook_on_stats method of the callback is called,
+        a number of hosts in the stats.processed dictionary is checked.
+        If there are hosts in the stats.processed dictionary,
+        sys.exit is never called.
+        """
+
+        callback = fail_if_no_hosts.CallbackModule()
+        stats = AggregateStats()
+
+        stats.processed = {
+            'system_foo': 'foo',
+            'system_bar': 'bar'}
+
+        callback.v2_playbook_on_stats(stats)
+        mock_exit.assert_not_called()
