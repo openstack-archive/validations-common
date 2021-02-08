@@ -38,6 +38,7 @@
     check:
       jobs:
         - openstack-tox-linters
+        - openstack-tox-cover
         - validations-common-functional
     gate:
       jobs:
