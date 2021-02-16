@@ -1,0 +1,13 @@
+---
+- name: Get active rsyslog service
+  shell: >
+    systemctl list-units "rsyslog.service" --state=active --no-legend --plain --no-pager
+  register: rsyslog_state
+  changed_when: false
+
+- name: Fails if we don't find active rsyslog
+  assert:
+    that:
+      - rsyslog_state.stdout_lines|length != 0
+    fail_msg: "The the rsyslog service isn't in an active state."
+    success_msg: "rsyslog is active"

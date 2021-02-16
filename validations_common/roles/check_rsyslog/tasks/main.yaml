@@ -1,0 +1,11 @@
+---
+- name: Gather facts
+  setup:
+    filter:
+      - ansible_os_family
+- include_tasks: yum.yaml
+  when: (ansible_os_family == 'RedHat') or
+        (ansible_os_family == 'CentOS')
+- include_tasks: systemctl.yaml
+  when: (ansible_os_family == 'RedHat') or
+        (ansible_os_family == 'CentOS')

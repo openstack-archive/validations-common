@@ -1,0 +1,11 @@
+---
+- name: Get installed package from yum
+  package_facts:
+    manager: "auto"
+
+- name: Fails if we don't find the rsyslog installed
+  assert:
+    that:
+      - "'rsyslog' in ansible_facts.packages"
+    fail_msg: "rsyslog package is not installed"
+    success_msg: "rsyslog package is installed"
