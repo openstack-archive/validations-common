@@ -1,6 +1,6 @@
 ---
 - hosts: all
-  gather_facts: true
+  gather_facts: false
   vars:
     metadata:
       name: Verify the server fits the RAM requirements

@@ -1,4 +1,15 @@
 ---
+- name: Gather facts
+  setup:
+    gather_subset:
+      - '!all'
+      - '!min'
+      - pkg_mgr
+
+- name: Gather package facts
+  package_facts:
+    manager: auto
+
 - name: Get available updates for packages
   check_package_update:
     package: "{{ item }}"
