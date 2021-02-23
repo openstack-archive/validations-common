@@ -1,4 +1,11 @@
 ---
+- name: Gather facts
+  setup:
+    gather_subset:
+      - processor_count
+      - '!all'
+      - '!min'
+
 - name: Verify the number of CPU cores
   fail:
     msg: >-

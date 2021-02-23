@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: true
+  gather_facts: false
   vars:
     metadata:
       name: Check if latest version of packages is installed

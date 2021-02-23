@@ -1,6 +1,6 @@
 ---
 - hosts: all
-  gather_facts: true
+  gather_facts: false
   vars:
     metadata:
       name: Verify if the server fits the CPU core requirements

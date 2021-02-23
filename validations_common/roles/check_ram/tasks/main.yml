@@ -1,4 +1,11 @@
 ---
+- name: Gather facts
+  setup:
+    gather_subset:
+      - hardware
+      - '!all'
+      - '!min'
+
 - name: Verify the RAM requirements
   fail:
     msg: >-
