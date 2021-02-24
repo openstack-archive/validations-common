@@ -43,4 +43,8 @@ class TestHaproxyConf(base.TestCase):
         }
 
         self.h_conf.parse_haproxy_conf(file_path)
-        mock_generic_ini_style_conf_parser.assert_called_once_with(*args.values())
+        mock_generic_ini_style_conf_parser.assert_called_once_with(
+            args['file_path'],
+            args['section_regex'],
+            args['option_regex']
+        )
