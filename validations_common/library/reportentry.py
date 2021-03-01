@@ -57,6 +57,12 @@ EXAMPLES = '''
 
 
 def format_msg_report(status, reason, recommendations):
+    """
+    Turn status, reason and list of recommendations into more
+    readable formatted strings.
+    :return: status and reason as string, recommendations as separate strings
+    :rtype: tuple of strings
+    """
     msg = ("[{}] '{}'\n".format(status, reason))
     if recommendations:
         for rec in recommendations:
@@ -66,6 +72,9 @@ def format_msg_report(status, reason, recommendations):
 
 
 def display_type_report(module, status, msg):
+    """
+    Pass msg to fail_json or exit_json methods depending on status.
+    """
     if status == 'ERROR':
         module.fail_json(msg=msg)
     elif status == "SKIPPED":

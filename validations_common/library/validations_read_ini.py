@@ -11,17 +11,17 @@
 # implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""
+Ansible module to read a value from an INI file.
+Usage:
+validations_read_ini: path=/path/to/file.ini section=default key=something
 
-# Ansible module to read a value from an Ini file.
-# Usage:
-#     - validations_read_ini: path=/path/to/file.ini section=default key=something
-#       register: my_ini
-#
-# This will read the `path/to/file.ini` file and read the `Hello!` value under:
-#     [default]
-#     something = Hello!
-#
-# You can register the result and use it later with `{{ my_ini.value }}`
+This will read the `path/to/file.ini` file and read the `Hello!` value under:
+    [default]
+    something = Hello!
+
+You can register the result and use it later with `{{ my_ini.value }}`
+"""
 
 try:
     import configparser as ConfigParser
@@ -33,6 +33,54 @@ import os
 
 from ansible.module_utils.basic import AnsibleModule
 from yaml import safe_load as yaml_safe_load
+
+
+
+DOCUMENTATION = '''
+---
+module: validations_read_ini
+short_description: Get data from an ini file
+description:
+    - Get data from an ini file
+options:
+    path:
+        required: true
+        description:
+            - File path
+        type: str
+    section:
+        required: true
+        description:
+            - Section to look up
+        type: str
+    key:
+        required: true
+        description:
+            - Section key to look up
+        type: str
+    default:
+        required: false
+        description:
+            - Default value if key isn't found
+    ignore_missing_file:
+        required: false
+        description:
+            - Flag if a missing file should be ignored
+        type: bool
+author: "Tomas Sedovic"
+'''
+
+EXAMPLES = '''
+- hosts: fizzbuz
+  tasks:
+    - name: Lookup bar value
+      validations_read_ini:
+        path: config.ini
+        section: foo
+        key: bar
+        ignore_missing_file: True
+      register: bar_value
+'''
 
 
 # Possible return values
@@ -85,48 +133,6 @@ def get_result(path, section, key, default=None):
                   key, section, path)
             ret = ReturnValue.KEY_NOT_FOUND
         return (ret, msg, value)
-
-
-DOCUMENTATION = '''
----
-module: validations_read_ini
-short_description: Get data from an ini file
-description:
-    - Get data from an ini file
-options:
-    path:
-        required: true
-        description:
-            - File path
-        type: str
-    section:
-        required: true
-        description:
-            - Section to look up
-        type: str
-    key:
-        required: true
-        description:
-            - Section key to look up
-        type: str
-    default:
-        required: false
-        description:
-            - Default value if key isn't found
-    ignore_missing_file:
-        required: false
-        description:
-            - Flag if a missing file should be ignored
-        type: bool
-author: "Tomas Sedovic"
-'''
-
-EXAMPLES = '''
-- hosts: webservers
-  tasks:
-    - name: Lookup bar value
-      validations_read_ini: path=config.ini section=foo key=bar ignore_missing_file=True
-'''
 
 
 def main():
