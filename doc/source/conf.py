@@ -27,6 +27,7 @@ sys.path.insert(0, os.path.join(os.path.abspath('.'), '_exts'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
     'sphinxcontrib.apidoc',
+    'sphinxcontrib.rsvgconverter',
     'sphinx.ext.viewcode',
     'sphinx.ext.autodoc',
     'openstackdocstheme',
@@ -42,6 +43,7 @@ apidoc_separate_modules = True
 # openstackdocstheme options
 openstackdocs_repo_name = 'openstack/validations-common'
 openstackdocs_use_storyboard = True
+openstackdocs_pdf_link = True
 openstackdocs_bug_project = 'tripleo'
 openstackdocs_bug_tag = 'documentation'
 
@@ -103,3 +105,6 @@ latex_documents = [
         'manual'
     ),
 ]
+
+# Allow deeper levels of nesting for \begin...\end stanzas
+latex_elements = {'maxlistdepth': 10, 'extraclassoptions': ',openany,oneside'}
