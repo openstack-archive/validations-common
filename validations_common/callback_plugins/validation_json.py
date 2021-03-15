@@ -37,7 +37,10 @@ DOCUMENTATION = '''
 
 VALIDATIONS_LOG_DIR = (os.getenv('VALIDATIONS_LOG_DIR')
                        if os.getenv('VALIDATIONS_LOG_DIR') else
-                       "/var/log/validations")
+                       ('/var/log/validations'
+                       if os.path.exists('/var/log/validations')
+                       and os.access('/var/log/validations', os.W_OK) else
+                       os.getcwd()))
 
 
 def current_time():
