@@ -1,6 +1,7 @@
 [run]
 branch = True
-source = validations-common
+source = validations_common
+omit = validations_common/tests/*
 
 [report]
 ignore_errors = True
