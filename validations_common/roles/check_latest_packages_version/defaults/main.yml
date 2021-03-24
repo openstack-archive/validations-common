@@ -6,5 +6,5 @@ tripleoclient: >-
   python2-tripleoclient
   {%- endif -%}
 
-packages:
+packages_list:
   - "{{ tripleoclient }}"

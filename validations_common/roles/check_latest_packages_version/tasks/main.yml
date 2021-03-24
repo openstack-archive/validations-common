@@ -14,7 +14,7 @@
   check_package_update:
     package: "{{ item }}"
     pkg_mgr: "{{ ansible_pkg_mgr }}"
-  with_items: "{{ packages }}"
+  with_items: "{{ packages_list }}"
   register: updates
 
 - name: Check if current version is the latest one
