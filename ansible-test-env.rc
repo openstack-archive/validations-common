@@ -1,6 +1,5 @@
 export VALIDATIONS_COMMON_WORKPATH="$(dirname $(readlink -f ${BASH_SOURCE[0]}))"
 export ANSIBLE_STDOUT_CALLBACK=debug
-export ANSIBLE_CALLBACK_PLUGINS="${VALIDATIONS_COMMON_WORKPATH}/validations_common/callback_plugins"
 export ANSIBLE_LIBRARY="${VALIDATIONS_COMMON_WORKPATH}/validations_common/library"
 
 # TODO(gchamoul): uncomment once we host lookup plugins
