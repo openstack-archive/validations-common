@@ -40,7 +40,7 @@ VALIDATIONS_LOG_DIR = (os.getenv('VALIDATIONS_LOG_DIR')
                        ('/var/log/validations'
                        if os.path.exists('/var/log/validations')
                        and os.access('/var/log/validations', os.W_OK) else
-                       os.getcwd()))
+                       os.environ.get('PWD')))
 
 
 def current_time():
