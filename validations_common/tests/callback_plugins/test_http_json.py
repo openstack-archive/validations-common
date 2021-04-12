@@ -19,13 +19,16 @@ test_http_json
 Tests for `http_json` callback plugin.
 
 """
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
+from validations_common.tests import base
+from validations_common.tests import fakes
 
 import validations_common.library.reportentry as validation
 from validations_common.callback_plugins import http_json
-from validations_common.tests import base
-
-from unittest import mock
 
 
 class TestHttpJson(base.TestCase):

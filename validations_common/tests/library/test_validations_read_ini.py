@@ -23,9 +23,15 @@ Tests for `validations_read_ini` module.
 import os
 import tempfile
 
-import validations_common.library.validations_read_ini as validation
-from validations_common.tests import base
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
+from validations_common.tests import base
+from validations_common.tests import fakes
+
+import validations_common.library.validations_read_ini as validation
 
 invalid_content = '''
 [DEFAULT#

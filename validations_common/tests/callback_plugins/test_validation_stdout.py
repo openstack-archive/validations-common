@@ -21,13 +21,19 @@ Tests for `validation_stdout` callback plugin.
 """
 import os
 import re
-from unittest import mock
 
-from ansible.plugins.callback import CallbackBase
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
+from validations_common.tests import base
+from validations_common.tests import fakes
 
 import validations_common.library.reportentry as validation
 from validations_common.callback_plugins import validation_stdout
-from validations_common.tests import base
+
+from ansible.plugins.callback import CallbackBase
 
 
 def is_iso_time(time_string):

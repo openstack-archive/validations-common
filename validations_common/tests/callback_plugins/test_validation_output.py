@@ -19,17 +19,18 @@ test_validation_output
 Tests for `validation_output` callback plugin.
 
 """
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
-from unittest import mock
+from validations_common.tests import base
+from validations_common.tests import fakes
 
-from ansible.executor.stats import AggregateStats
-from ansible.parsing.ajson import AnsibleJSONEncoder
-from ansible.playbook import Playbook
 from ansible.plugins.callback import CallbackBase
 
 import validations_common.library.reportentry as validation
 from validations_common.callback_plugins import validation_output
-from validations_common.tests import base
 
 
 class MockStats(mock.MagicMock):
