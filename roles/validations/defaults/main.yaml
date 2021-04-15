@@ -4,27 +4,27 @@ zuul_work_virtualenv: "{{ ansible_user_dir }}/.venv"
 ansible_dir: "{{ zuul_work_virtualenv }}/share/ansible/"
 validation_dir: "{{ zuul_work_virtualenv }}/share/ansible/validation-playbooks"
 vf_log_dir: "/var/log/validations"
-val_exec: "source {{ zuul_work_virtualenv }}/bin/activate; validation.py"
+val_exec: "source {{ zuul_work_virtualenv }}/bin/activate; validation"
 command:
   - output: "{{ log_dir }}/run.log"
+    action: "run"
     command: >-
       {{ val_exec }} run --validation check-ftype,512e
       --validation-dir {{ validation_dir }}
       --ansible-base-dir {{ ansible_dir }}
       --output-log {{ log_dir }}/run.log
   - output: "{{ log_dir }}/run-group.log"
+    action: "run"
     command: >-
       {{ val_exec }} run --group prep --validation-dir {{ validation_dir }}
       --ansible-base-dir {{ ansible_dir }}
       --output-log {{ log_dir }}/run-group.log
       --extra-vars minimal_ram_gb=7
   - output: "{{ log_dir }}/list.log"
+    action: "list"
     command: >-
-      {{ val_exec }} list --validation-dir {{ validation_dir }}
-      --ansible-base-dir {{ ansible_dir }}
-      --output-log {{ log_dir }}/list.log
+      {{ val_exec }} list --validation-dir {{ validation_dir }} -f json > {{ log_dir }}/list.log 2>&1
   - output: "{{ log_dir }}/show.log"
+    action: "show"
     command: >-
-      {{ val_exec }} show --validation-dir {{ validation_dir }}
-      --ansible-base-dir {{ ansible_dir }}
-      --output-log {{ log_dir }}/show.log
+      {{ val_exec }} show --validation-dir {{ validation_dir }} check-ram -f json > {{ log_dir }}/show.log 2>&1
