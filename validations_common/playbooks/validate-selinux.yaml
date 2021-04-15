@@ -6,6 +6,7 @@
       description: >-
         Ensures we don't have any SELinux denials on the system
       groups:
+        - backup-and-restore
         - pre-deployment
         - post-deployment
         - pre-upgrade

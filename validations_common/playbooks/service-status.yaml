@@ -8,6 +8,7 @@
         a failed service.
       groups:
         - prep
+        - backup-and-restore
         - pre-deployment
         - pre-upgrade
         - post-deployment
