@@ -20,6 +20,41 @@
   gather_facts: false
 
   tasks:
-    - name: install patch rpm
+    - name: Create /opt/valfrwk directory
+      file:
+        path: '/opt/valfrwk'
+        state: directory
+        mode: "0777"
+
+    - name: Copy valfrwk-release packages
+      copy:
+        src: "{{ item }}"
+        dest: /opt/valfrwk
+      with_items:
+        - ./valfrwk-release-1.0.0-1.20210331045404.4c29590.el8.x86_64.rpm
+        - ./valfrwk-release-1.0.0-2.20210401064344.c8ee186.el8.x86_64.rpm
+        - ./valfrwk-release-1.0.1-1.20210401074356.drh345o.el8.x86_64.rpm
+
+    - name: Install createrepo rpm
       package:
-        name: patch
+        name: createrepo
+        state: present
+
+    - name: Generate yum repo
+      command: >-
+        createrepo /opt/valfrwk/
+      args:
+        warn: false
+
+    - name: Add valfrwk yum repository
+      yum_repository:
+        name: valfrwk
+        description: Validations Framework Repo
+        file: valfrwk
+        baseurl: file:///opt/valfrwk
+        gpgcheck: false
+
+    - name: Install the oldest valfrwk-release rpm
+      package:
+        name: valfrwk-release-1.0.0-1.20210331045404.4c29590.el8
+        state: present

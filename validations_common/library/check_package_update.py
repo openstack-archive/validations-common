@@ -13,7 +13,23 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-""" Check for available updates for a given package."""
+"""Check for available updates for a given package.
+Module queries and parses output of at least two separate
+external binaries, in order to obtain information about
+supported package manager, installed and available packages.
+As such it has many points of failure.
+
+Information about supported package managers,
+such as the commands to use while working with them
+and the expected stderr output we can encounter while querying repos,
+are stored as a nested dictionery SUPPORTED_PKG_MGRS.
+With names of the supported package managers as keys
+of the first level elements. And the aformentioned information
+on the second level, as lists of strings, with self-explanatory keys.
+
+Formally speaking it is a tree of a sort.
+But so is entire python namespace.
+"""
 
 import collections
 import subprocess
@@ -24,21 +40,23 @@ from yaml import safe_load as yaml_safe_load
 DOCUMENTATION = '''
 ---
 module: check_package_update
-short_description: Check for available updates for a given package
+short_description: Check for available updates for given packages
 description:
-    - Check for available updates for a given package
+    - Check for available updates for given packages
 options:
-    package:
+    packages_list:
         required: true
         description:
-            - The name of the package you want to check
-        type: str
+            - The names of the packages you want to check
+        type: list
     pkg_mgr:
-        required: true
+        required: false
         description:
             - Supported Package Manager, DNF or YUM
         type: str
-author: "Florian Fuchs"
+author:
+    - Florian Fuchs
+    - Jiri Podivin (@jpodivin)
 '''
 
 EXAMPLES = '''
@@ -46,88 +64,239 @@ EXAMPLES = '''
   tasks:
     - name: Get available updates for packages
       check_package_update:
-        package: python-tripleoclient
-        pkg_mgr: "{{ ansible_pkg_mgr}}"
+        packages_list:
+          - coreutils
+          - wget
+        pkg_mgr: "{{ ansible_pkg_mgr }}"
 '''
 
-SUPPORTED_PKG_MGRS = (
-    'yum',
-    'dnf',
-)
+SUPPORTED_PKG_MGRS = {
+    'dnf': {
+        'query_installed': [
+            'rpm', '-qa', '--qf',
+            '%{NAME}|%{VERSION}|%{RELEASE}|%{ARCH}\n'
+        ],
+        'query_available': [
+            'dnf', '-q', 'list', '--available'
+        ],
+        'allowed_errors': [
+            '',
+            'Error: No matching Packages to list\n'
+        ]
+    },
+    'yum': {
+        'query_installed': [
+            'rpm', '-qa', '--qf',
+            '%{NAME}|%{VERSION}|%{RELEASE}|%{ARCH}\n'
+        ],
+        'query_available': [
+            'yum', '-q', 'list', 'available'
+        ],
+        'allowed_errors': [
+            '',
+            'Error: No matching Packages to list\n'
+        ]
+    },
+}
 
 
-PackageDetails = collections.namedtuple('PackageDetails',
-                                        ['name', 'version', 'release', 'arch'])
+PackageDetails = collections.namedtuple(
+    'PackageDetails',
+    ['name', 'version', 'release', 'arch'])
 
 
-def get_package_details(output):
-    if output:
-        return PackageDetails(
-            output.split('|')[0],
-            output.split('|')[1],
-            output.split('|')[2],
-            output.split('|')[3],
+def get_package_details(pkg_details_string):
+    """Returns PackageDetails namedtuple from given string.
+    Raises ValueError if the number of '|' separated
+    fields is < 4.
+    """
+    split_output = pkg_details_string.split('|')
+    try:
+        pkg_details = PackageDetails(
+            split_output[0],
+            split_output[1],
+            split_output[2],
+            split_output[3],
         )
+    except IndexError:
+        raise ValueError(
+            (
+                "Package description '{}' doesn't contain fields"
+                " required for processing."
+            ).format(pkg_details_string)
+        )
+
+    return pkg_details
+
+
+def _allowed_pkg_manager_stderr(stderr, allowed_errors):
+    """Returns False if the error message isn't in the
+    allowed_errors list.
+    This function factors out large, and possibly expanding,
+    condition so it doesn't cause too much confusion.
+    """
+
+    if stderr in allowed_errors:
+        return True
+    return False
 
 
 def _command(command):
-    # Return the result of a subprocess call
-    # as [stdout, stderr]
-    process = subprocess.Popen(command,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE,
-                               universal_newlines=True)
+    """
+    :returns: the result of a subprocess call
+    as a tuple (stdout, stderr).
+    """
+    process = subprocess.Popen(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True)
+
     return process.communicate()
 
 
-def check_update(module, package, pkg_mgr):
+def _get_pkg_manager(module):
+    """Return name of available package manager.
+    Queries binaries using `command -v`, in order defined by
+    the `SUPPORTED_PKG_MGRS`.
+    :returns: string
+    """
+    for possible_pkg_mgr in SUPPORTED_PKG_MGRS:
+
+        stdout, stderr = _command(['command', '-v', possible_pkg_mgr])
+        if stdout != '' and stderr == '':
+            return possible_pkg_mgr
+
+    module.fail_json(
+        msg=(
+            "None of the supported package managers '{}' seems to be "
+            "available on this system."
+        ).format(' '.join(SUPPORTED_PKG_MGRS))
+    )
+
+
+def _get_new_pkg_info(available_stdout):
+    """Return package information as dictionary. With package names
+    as keys and detailed information as list of strings.
+    """
+    available_stdout = available_stdout.split('\n')[1:]
+
+    available_stdout = [line.rstrip().split() for line in available_stdout]
+
+    new_pkgs_info = {}
+
+    for line in available_stdout:
+        if len(line) != 0:
+            new_pkgs_info[line[0]] = PackageDetails(
+                line[0],
+                line[1].split('-')[0],
+                line[1].split('-')[1],
+                line[0].split('.')[1])
+
+    return new_pkgs_info
+
+
+def _get_installed_pkgs(installed_stdout, packages, module):
+    """Return dictionary of installed packages.
+    Package names form keys and the output of the get_package_details
+    function values of the dictionary.
+    """
+    installed = {}
+    installed_stdout = installed_stdout.split('\n')[:-1]
+
+    for package in installed_stdout:
+        if package != '':
+            package = get_package_details(package)
+            if package.name in packages:
+                installed[package.name + '.' + package.arch] = package
+                packages.remove(package.name)
+        #Once find all the requested packages we don't need to continue search
+        if len(packages) == 0:
+            break
+
+    #Even a single missing package is a reason for failure.
+    if len(packages) > 0:
+        msg = "Following packages are not installed {}".format(packages)
+        module.fail_json(
+            msg=msg
+        )
+        return
+
+    return installed
+
+
+def check_update(module, packages_list, pkg_mgr):
+    """Check if the packages in the 'packages_list are up to date.
+    Queries binaries, defined the in relevant SUPPORTED_PKG_MGRS entry,
+    to obtain information about present and available packages.
+    """
+    if len(packages_list) == 0:
+        module.fail_json(
+            msg="No packages given to check.")
+        return
+
+    if pkg_mgr is None:
+        pkg_mgr = _get_pkg_manager(module=module)
     if pkg_mgr not in SUPPORTED_PKG_MGRS:
         module.fail_json(
             msg='Package manager "{}" is not supported.'.format(pkg_mgr))
         return
 
-    installed_stdout, installed_stderr = _command(
-        ['rpm', '-qa', '--qf',
-         '%{NAME}|%{VERSION}|%{RELEASE}|%{ARCH}',
-         package])
+    pkg_mgr = SUPPORTED_PKG_MGRS[pkg_mgr]
+
+    installed_stdout, installed_stderr = _command(pkg_mgr['query_installed'])
 
     # Fail the module if for some reason we can't lookup the current package.
     if installed_stderr != '':
         module.fail_json(msg=installed_stderr)
         return
-    elif not installed_stdout:
+    if not installed_stdout:
         module.fail_json(
-            msg='"{}" is not an installed package.'.format(package))
+            msg='no output returned for the query.{}'.format(
+                ' '.join(pkg_mgr['query_installed'])
+            ))
         return
 
-    installed = get_package_details(installed_stdout)
+    installed = _get_installed_pkgs(installed_stdout, packages_list, module)
 
-    pkg_mgr_option = 'available'
-    if pkg_mgr == 'dnf':
-        pkg_mgr_option = '--available'
+    installed_pkg_names = ' '.join(installed)
 
-    available_stdout, available_stderr = _command(
-        [pkg_mgr, '-q', 'list', pkg_mgr_option, installed.name])
+    pkg_mgr['query_available'].append(installed_pkg_names)
 
+    available_stdout, available_stderr = _command(pkg_mgr['query_available'])
+
+    #We need to check that the stderr consists only of the expected strings
+    #This can get complicated if the CLI on the pkg manager side changes.
+    if not _allowed_pkg_manager_stderr(available_stderr, pkg_mgr['allowed_errors']):
+        module.fail_json(msg=available_stderr)
+        return
     if available_stdout:
-        new_pkg_info = available_stdout.split('\n')[1].rstrip().split()[:2]
-        new_ver, new_rel = new_pkg_info[1].split('-')
-
-        module.exit_json(
-            changed=False,
-            name=installed.name,
-            current_version=installed.version,
-            current_release=installed.release,
-            new_version=new_ver,
-            new_release=new_rel)
+        new_pkgs_info = _get_new_pkg_info(available_stdout)
     else:
-        module.exit_json(
-            changed=False,
-            name=installed.name,
-            current_version=installed.version,
-            current_release=installed.release,
-            new_version=None,
-            new_release=None)
+        new_pkgs_info = {}
+
+    results = []
+
+    for installed_pkg in installed:
+
+        results.append(
+            {
+                'name': installed_pkg,
+                'current_version': installed[installed_pkg].version,
+                'current_release': installed[installed_pkg].release,
+                'new_version': None,
+                'new_release': None
+            }
+        )
+
+        if installed_pkg in new_pkgs_info:
+            results[-1]['new_version'] = new_pkgs_info[installed_pkg][1]
+            results[-1]['new_release'] = new_pkgs_info[installed_pkg][2]
+
+    module.exit_json(
+        changed=False,
+        outdated_pkgs=results
+    )
 
 
 def main():
@@ -135,9 +304,10 @@ def main():
         argument_spec=yaml_safe_load(DOCUMENTATION)['options']
     )
 
-    check_update(module,
-                 module.params.get('package'),
-                 module.params.get('pkg_mgr'))
+    check_update(
+        module,
+        packages_list=module.params.get('packages_list'),
+        pkg_mgr=module.params.get('pkg_mgr', None))
 
 
 if __name__ == '__main__':

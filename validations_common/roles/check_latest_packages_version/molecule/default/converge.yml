@@ -19,27 +19,64 @@
   hosts: all
 
   tasks:
-    - name: Validate No Available Update for patch rpm
-      include_role:
-        name: check_latest_packages_version
-      vars:
-        packages_list:
-          - patch
-
-    - name: Working Detection of Update for Pam package
+    - name: Run validation with empty package list
       block:
         - include_role:
             name: check_latest_packages_version
-          vars:
-            packages_list:
-              - pam
 
       rescue:
         - name: Clear host errors
           meta: clear_host_errors
 
         - debug:
-            msg: The validation works! End the playbook run
+            msg: |
+              The validation fails due to an empty package list
+              given as parameter.
+
+    - name: Working Detection of Update for valfrwk-release package
+      block:
+        - include_role:
+            name: check_latest_packages_version
+          vars:
+            packages_list:
+              - valfrwk-release
+
+      rescue:
+        - name: Clear host errors
+          meta: clear_host_errors
+
+        - debug:
+            msg: The validation has detected a new version!
+
+    - name: Validate No Available Update for valfrwk-release rpm
+      block:
+        - name: Update valfrwk-release rpm to the latest one
+          package:
+            name: valfrwk-release
+            state: latest
+
+        - include_role:
+            name: check_latest_packages_version
+          vars:
+            packages_list:
+              - valfrwk-release
+
+    - name: Working Detection of Update for an uninstalled package
+      block:
+        - include_role:
+            name: check_latest_packages_version
+          vars:
+            packages_list:
+              - whatchamacallit
+
+      rescue:
+        - name: Clear host errors
+          meta: clear_host_errors
+
+        - debug:
+            msg: |
+              The validation fails because 'whatchamacallit' rpm is not
+              installed! End the playbook run
 
         - name: End play
           meta: end_play
