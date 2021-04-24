@@ -107,7 +107,6 @@
         - validations-common-centos-8-molecule-advanced_format_512e_support
         - validations-common-centos-8-molecule-check_latest_packages_version
         - validations-common-centos-8-molecule-dns
-        - validations-common-centos-8-molecule-haproxy
         - validations-common-centos-8-molecule-ntp
         - validations-common-centos-8-molecule-service_status
         - validations-common-centos-8-molecule-check_cpu
@@ -120,7 +119,6 @@
       jobs:
         - validations-common-centos-8-molecule-check_latest_packages_version
         - validations-common-centos-8-molecule-dns
-        - validations-common-centos-8-molecule-haproxy
         - validations-common-centos-8-molecule-check_cpu
         - validations-common-centos-8-molecule-check_disk_space
         - validations-common-centos-8-molecule-check_ram
@@ -185,17 +183,6 @@
     parent: validations-common-centos-8-base
     vars:
       validations_common_role_name: dns
-- job:
-    files:
-      - ^validations_common/roles/haproxy/.*
-      - ^tests/prepare-test-host.yml
-      - ^playbooks/molecule/pre.yml
-      - ^playbooks/molecule/run.yml
-      - ^molecule-requirements.txt
-    name: validations-common-centos-8-molecule-haproxy
-    parent: validations-common-centos-8-base
-    vars:
-      validations_common_role_name: haproxy
 - job:
     files:
       - ^validations_common/roles/check_cpu/.*
