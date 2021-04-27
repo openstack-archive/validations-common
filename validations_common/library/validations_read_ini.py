@@ -60,8 +60,10 @@ def get_result(path, section, key, default=None):
 
     try:
         config.read(path)
-    except (OSError, ConfigParser.ParsingError):
-        msg = "The file '{}' is not in a valid INI format.".format(path)
+    except (OSError, ConfigParser.ParsingError) as exc_msg:
+        msg = "The file '{}' is not in a valid INI format: {}".format(
+            path, exc_msg
+        )
         ret = ReturnValue.INVALID_FORMAT
         return (ret, msg, value)
 

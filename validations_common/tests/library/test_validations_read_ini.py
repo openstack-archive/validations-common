@@ -82,8 +82,11 @@ class TestValidationsReadIni(base.TestCase):
         tmpfile.close()
 
         self.assertEqual(validation.ReturnValue.INVALID_FORMAT, ret)
-        self.assertEqual("The file '{}' is not in a valid INI format.".format(
-                         tmp_name), msg)
+        asserted = ("The file '{path}' is not in a valid INI format: File "
+                    "contains no section headers.\nfile: '{path}', line: 2\n"
+                    "'[DEFAULT#\\n\'").format(path=tmp_name)
+
+        self.assertEqual(asserted, msg)
         self.assertIsNone(value)
 
     def test_get_result_key_not_found(self):
