@@ -176,7 +176,12 @@ class Validation(argparse.ArgumentParser):
                     t.add_row(r)
             print(t)
         else:
-            raise RuntimeError("Wrong data type.")
+            raise TypeError(
+                (
+                    "data must be of 'tuple' type. "
+                    "Instead {} was provided."
+                ).format(type(data))
+            )
 
     def _write_output(self, output_log, results):
         """Write output log file as Json format"""
@@ -198,9 +203,9 @@ class Validation(argparse.ArgumentParser):
         if extra_vars:
             try:
                 extra_vars = dict(e.split("=") for e in parsed_args.extra_vars)
-            except ValueError:
+            except ValueError as error:
                 msg = "extra vars option should be formed as: KEY=VALUE."
-                raise RuntimeError(msg)
+                raise RuntimeError(msg) from error
         v_actions = ValidationActions(validation_path=validation_dir,
                                       group=group)
         if 'run' in action:
