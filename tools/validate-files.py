@@ -17,17 +17,17 @@ import sys
 
 
 def exit_usage():
-    print('Usage %s <directory>' % sys.argv[0])
+    print('Usage {} <directory>'.format(sys.argv[0]))
     sys.exit(1)
 
 
-def validate_library_file(file_path):
+def validate_library_file(file_path, quiet):
     with open(file_path) as f:
         file_content = f.read()
         if 'DOCUMENTATION = ' not in file_content \
                 or 'EXAMPLES = ' not in file_content:
-            if quiet < 1:
-                print('Missing ansible documentation in %s' % file_path)
+            if quiet < 3:
+                print('Missing ansible documentation in {}'.format(file_path))
             return 1
     return 0
 
@@ -37,8 +37,6 @@ def parse_args():
 
     p.add_argument('--quiet', '-q',
                    action='count',
-                   # TODO(akrivoka): Python3 sets this default to None instead
-                   # of 0. Remove this when this bug is fixed in Python3.
                    default=0,
                    help='output warnings and errors (-q) or only errors (-qq)')
 
@@ -49,40 +47,44 @@ def parse_args():
     return p.parse_args()
 
 
-args = parse_args()
-path_args = args.path_args
-quiet = args.quiet
-exit_val = 0
-failed_files = []
+def main():
+    args = parse_args()
+    path_args = args.path_args
+    quiet = args.quiet
+    exit_val = 0
+    failed_files = []
 
-for base_path in path_args:
-    if os.path.isdir(base_path):
-        for subdir, dirs, files in os.walk(base_path):
-            if '.tox' in dirs:
-                dirs.remove('.tox')
-            if '.git' in dirs:
-                dirs.remove('.git')
-            for f in files:
-                if f.endswith('.py') \
-                        and not f == '__init__.py' \
-                        and subdir in [os.path.join(base_path,
-                                                    'validations_common',
-                                                    'library')]:
-                    file_path = os.path.join(subdir, f)
-                    if quiet < 1:
-                        print('Validating %s' % file_path)
-                    failed = validate_library_file(file_path)
-                    if failed:
-                        failed_files.append(file_path)
-                    exit_val |= failed
+    for base_path in path_args:
+        if os.path.isdir(base_path):
+            for subdir, dirs, files in os.walk(base_path):
+                if '.tox' in dirs:
+                    dirs.remove('.tox')
+                if '.git' in dirs:
+                    dirs.remove('.git')
+                for f in files:
+                    if f.endswith('.py') \
+                            and not f == '__init__.py' \
+                            and subdir in [os.path.join(base_path,
+                                                        'validations_common',
+                                                        'library')]:
+                        file_path = os.path.join(subdir, f)
+                        if quiet < 1:
+                            print('Validating {}'.format(file_path))
+                        failed = validate_library_file(file_path, quiet)
+                        if failed:
+                            failed_files.append(file_path)
+                        exit_val |= failed
+        else:
+            print('Unexpected argument {}'.format(base_path))
+            exit_usage()
+
+    if failed_files:
+        print('Validation failed on:')
+        for f in failed_files:
+            print(f)
     else:
-        print('Unexpected argument %s' % base_path)
-        exit_usage()
+        print('Validation successful!')
+    sys.exit(exit_val)
 
-if failed_files:
-    print('Validation failed on:')
-    for f in failed_files:
-        print(f)
-else:
-    print('Validation successful!')
-sys.exit(exit_val)
+if __name__ == '__main__':
+    main()
