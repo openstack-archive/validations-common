@@ -1,0 +1,23 @@
+---
+validations_list:
+  compute:
+    - nova-status:
+        extra_args: ""
+  network:
+    - undercloud-neutron-sanity-check:
+        extra_args: ""
+  validation:
+    - check-cpu:
+        extra_args: "--extra-vars minimal_cpu_count=2"
+    - 512e:
+        extra_args: ""
+    - check-ram:
+        extra_args: "--extra-vars minimal_ram_gb=2"
+  tripleo:
+    - undercloud-process-count:
+        extra_args: ""
+validations_group:
+  compute:
+    - compute
+  network:
+    - network

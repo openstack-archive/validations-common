@@ -20,6 +20,6 @@
     group: false
   loop:
     - dest: "{{ log_path }}/validations-logs"
-      src: "logs"
+      src: "artifacts"
   loop_control:
     loop_var: vf_output

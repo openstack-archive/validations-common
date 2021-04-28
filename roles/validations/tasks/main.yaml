@@ -9,22 +9,46 @@
     group: "{{ ansible_user }}"
     recurse: true
 
-# @matbu: TODO make the /var/log/validations as a parameter
-# We should be able to write validation logs outside of the /var/log path
-# This statement will have to be remove then.
-- name: Create Validations log symlink
-  file:
-    src: "{{ vf_log_dir }}"
-    dest: "{{ log_dir }}"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    state: link
+- name: check if virtualenv is used
+  register: is_virtualenv
+  stat:
+    path: "{{ zuul_work_virtualenv }}"
 
-# @matbu: TODO make ansible-runner depends on Ansible
-- name: Install Ansible
-  pip:
-    name: ansible
-    virtualenv: "{{ zuul_work_virtualenv }}"
+- name: Set commmand if virtualenv exists
+  set_fact:
+    validation_command: "source {{ zuul_work_virtualenv }}/bin/activate; validation"
+  when: is_virtualenv.stat.exists
 
-- include: validations.yaml validation_command="{{ item.command }}" val_output="{{ item.output }}" action="{{ item.action }}"
-  loop: "{{command}}"
+- name: Set Validation directory if virtualenv exists
+  set_fact:
+    validation_dir: "--validation-dir {{ zuul_work_virtualenv }}/share/ansible/validation-playbooks"
+  when: is_virtualenv.stat.exists
+
+- name: Set Ansible base directory if virtualenv exists
+  set_fact:
+    ansible_dir: "--ansible-base-dir {{ zuul_work_virtualenv }}/share/ansible/"
+  when: is_virtualenv.stat.exists
+
+- name: Set commmand without virtualenv
+  set_fact:
+    validation_command: "validation"
+  when: not is_virtualenv.stat.exists
+
+- name: Set validation dir without virtualenv
+  set_fact:
+    validation_dir: "--validation-dir /usr/share/ansible/validation-playbooks"
+  when: not is_virtualenv.stat.exists
+
+- include: run.yaml name="{{ item }}"
+  when:
+    - run_validation|default(false)|bool
+    - component | length > 0
+  with_dict: "{{ validations_list[component] }}"
+
+- include: list.yaml
+
+- include: show.yaml name="{{ item }}"
+  when:
+    - run_validation|default(false)|bool
+    - component | length > 0
+  with_dict: "{{ validations_list[component] }}"

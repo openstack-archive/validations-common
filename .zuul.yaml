@@ -11,6 +11,7 @@
     vars:
       devstack_localrc:
         USE_PYTHON3: true
+      run_validation: true
     irrelevant-files:
       - ^.*\.rst$
       - ^doc/.*$
