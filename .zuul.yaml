@@ -43,12 +43,13 @@
 - project:
     templates:
       - check-requirements
-      - openstack-python3-victoria-jobs
       - validations-common-molecule-jobs
     check:
       jobs:
         - openstack-tox-linters
         - openstack-tox-cover
+        - openstack-tox-py36
+        - openstack-tox-py39
         - validations-common-functional
         - tripleo-ci-centos-8-content-provider:
             dependencies:
@@ -70,6 +71,8 @@
     gate:
       jobs:
         - openstack-tox-linters
+        - openstack-tox-py36
+        - openstack-tox-py39
         - validations-common-functional
         - tripleo-ci-centos-8-content-provider:
             dependencies:
