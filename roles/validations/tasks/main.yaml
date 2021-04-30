@@ -26,5 +26,5 @@
     name: ansible
     virtualenv: "{{ zuul_work_virtualenv }}"
 
-- include: validations.yaml validation_command="{{ item.command }}" val_output="{{ item.output }}"
+- include: validations.yaml validation_command="{{ item.command }}" val_output="{{ item.output }}" action="{{ item.action }}"
   loop: "{{command}}"
