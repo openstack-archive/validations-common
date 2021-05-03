@@ -1,0 +1,6 @@
+---
+- name: List Validation
+  register: list_output
+  shell:
+    cmd: "{{ validation_command }} list {{ validation_dir }} -f json > {{ val_working_dir }}/list.log 2>&1"
+    executable: /bin/bash

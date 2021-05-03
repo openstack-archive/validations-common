@@ -1,0 +1,6 @@
+---
+- name: Show Validation
+  register: show_output
+  shell:
+    cmd: "{{ validation_command }} show {{ validation_dir }} --validation {{ name.key }} -f json > {{ val_working_dir }}/show.log 2>&1"
+    executable: /bin/bash
