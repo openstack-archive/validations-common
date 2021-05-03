@@ -23,3 +23,21 @@
       src: "artifacts"
   loop_control:
     loop_var: vf_output
+
+- name: Find validations data
+  find:
+    paths: "{{ output_dir }}"
+    patterns: "*.json,*.log"
+  register: validation_json
+
+- name: Collect Validation logs
+  synchronize:
+    dest: "{{ log_path }}/validations-logs/"
+    mode: pull
+    src: "{{ logs.path }}"
+    verify_host: true
+    owner: false
+    group: false
+  loop: "{{ validation_json.files }}"
+  loop_control:
+    loop_var: logs
