@@ -4,6 +4,19 @@ parseable: true
 quiet: false
 rulesdir:
     - .ansible-lint_rules/
+
+# Mock modules or roles in order to pass ansible-playbook --syntax-check
+mock_modules: []
+mock_roles:
+  - fetch-devstack-log-dir
+  - fetch-output
+  - fetch-python-sdist-output
+  - fetch-subunit-output
+  - ensure-if-python
+  - ensure-pip
+  - ensure-tox
+  - ensure-virtualenv
+
 skip_list:
     # Lines should be no longer than 120 chars.
     - '204'
