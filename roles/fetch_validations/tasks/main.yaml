@@ -10,11 +10,24 @@
   loop_control:
     loop_var: vf_output_dir
 
+# TODO(jpodivin):
+# This is a temporary construct to bridge the time span
+# when new log path handling is being tested but isn't merged yet
+- name: Discover new log dir
+  stat:
+    path: "{{ output_dir }}/validations"
+  register: new_log_dir
+
+- name: Set log dir
+  set_fact:
+    available_log_dir: "{{'validations' if new_log_dir.stat.exists else 'artifacts'}}"
+# End of the temporary construct
+
 - name: Collect logs and artifacts
   synchronize:
-    dest: "{{ log_path }}/validations-logs"
+    dest: "{{ log_path }}/validations-logs/"
     mode: pull
-    src: "{{ output_dir }}/artifacts/"
+    src: "{{ output_dir }}/{{ available_log_dir }}/"
     verify_host: true
     owner: false
     group: false
