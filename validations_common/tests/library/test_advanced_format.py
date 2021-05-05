@@ -12,9 +12,15 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from unittest import mock
-from validations_common.library import advanced_format
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
 from validations_common.tests import base
+from validations_common.tests import fakes
+
+from validations_common.library import advanced_format
 
 
 class TestAdvancedFormat(base.TestCase):

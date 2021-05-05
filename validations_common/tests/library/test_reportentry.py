@@ -19,11 +19,16 @@ test_report_entry
 Tests for `reportentry` module.
 """
 
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
+from validations_common.tests import base
+from validations_common.tests import fakes
 
 import validations_common.library.reportentry as validation
-from validations_common.tests import base
 
-from unittest import mock
 
 reason = "Reason #1"
 recommendation = ['Recommendation #1']

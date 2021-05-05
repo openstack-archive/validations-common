@@ -19,16 +19,18 @@ test_fail_if_no_hosts
 Tests for `fail_if_no_hosts` callback plugin.
 
 """
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
+from validations_common.tests import base
+from validations_common.tests import fakes
 
 import validations_common.library.reportentry as validation
 from validations_common.callback_plugins import fail_if_no_hosts
-from validations_common.tests import base
 
 from ansible.plugins.callback import CallbackBase
-from ansible.executor.stats import AggregateStats
-
-from unittest import mock
 
 
 class TestFailIfNoHosts(base.TestCase):
@@ -64,7 +66,7 @@ class TestFailIfNoHosts(base.TestCase):
         the callback calls sys.exit.
         """
         callback = fail_if_no_hosts.CallbackModule()
-        stats = AggregateStats()
+        stats = mock.MagicMock()
 
         callback.v2_playbook_on_stats(stats)
         mock_exit.assert_called_once_with(10)
@@ -82,7 +84,7 @@ class TestFailIfNoHosts(base.TestCase):
         """
 
         callback = fail_if_no_hosts.CallbackModule()
-        stats = AggregateStats()
+        stats = mock.MagicMock()
 
         stats.processed = {
             'system_foo': 'foo',

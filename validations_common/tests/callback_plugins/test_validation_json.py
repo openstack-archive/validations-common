@@ -19,12 +19,15 @@ test_validation_json
 Tests for `validation_json` callback plugin.
 
 """
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
+from validations_common.tests import base
+from validations_common.tests import fakes
 
 import validations_common.library.reportentry as validation
-from validations_common.tests import base
-
-from unittest import mock
 
 
 class TestValidationJson(base.TestCase):

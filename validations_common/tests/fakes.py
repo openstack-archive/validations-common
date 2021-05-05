@@ -12,18 +12,13 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import sys
 try:
     from unittest import mock
 except ImportError:
     import mock
 
-from validations_common.tests import base
-from validations_common.tests import fakes
+#This section mocks unnecessary module imports.
 
-from validations_common.library import warn
-
-
-class TestWarn(base.TestCase):
-    def setUp(self):
-        super(TestWarn, self).setUp()
-        self.warn = warn.main
+sys.modules['ansible.parsing.ajson'] = mock.MagicMock()
+sys.modules['prettytable'] = mock.MagicMock()
