@@ -1,7 +1,7 @@
 ---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.5.0
+    rev: v3.4.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -9,22 +9,28 @@ repos:
       - id: check-byte-order-marker
       - id: check-executables-have-shebangs
       - id: check-merge-conflict
+      - id: check-symlinks
       - id: debug-statements
-      - id: flake8
-        entry: >-
-          flake8 --ignore=E24,E121,E122,E123,E124,E126,E226
-          --ignore=E265,E305,E402,F401,F405,E501,E704,F403,F841,W503,W605
       - id: check-yaml
         files: .*\.(yaml|yml)$
+
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.9.1
+    hooks:
+      - id: flake8
+        additional_dependencies: [flake8-typing-imports==1.6.0]
+        entry: flake8 --ignore=E24,E121,E122,E123,E124,E126,E226,E265,E305,E402,F401,F405,E501,E704,F403,F841,W503,W605
+
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.20.0
+    rev: v1.26.1
     hooks:
       - id: yamllint
         files: \.(yaml|yml)$
         types: [file, yaml]
         entry: yamllint --strict -f parsable
+
   - repo: https://github.com/ansible-community/ansible-lint
-    rev: v5.0.3
+    rev: v5.0.8
     hooks:
       - id: ansible-lint
         always_run: true
@@ -33,8 +39,9 @@ repos:
           - 'ansible<2.10'
         verbose: true
         entry: ansible-lint --force-color -p -v
+
   - repo: https://github.com/openstack-dev/bashate.git
-    rev: 0.6.0
+    rev: 2.0.0
     hooks:
       - id: bashate
         entry: bashate --error . --verbose --ignore=E006,E040
