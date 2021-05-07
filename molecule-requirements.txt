@@ -1,11 +1,11 @@
 # this is required for the molecule jobs
-ansible>=2.8,!=2.8.9,!=2.9.12,<2.10.0
-ansi2html
-jinja2>=2.8.0,<3
-mock
-molecule>=3.0,<3.1
-pytest
-pytest-cov
-pytest-html
-pytest-xdist
+ansible>=2.8,!=2.8.9,!=2.9.12,<2.10.0 # GPLv3+
+ansi2html # LGPLv3+
+jinja2>=2.8.0,<3 # BSD-3-Clause
+mock # BSD
+molecule>=3.0,<3.1 # MIT
+pytest # MIT
+pytest-cov # MIT
+pytest-html # Mozilla Public License 2.0
+pytest-xdist # MIT
 selinux  # MIT

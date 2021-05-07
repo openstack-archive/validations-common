@@ -4,4 +4,4 @@
 
 pbr>=3.1.1 # Apache-2.0
 PyYAML>=3.13 # MIT
-PrettyTable>=0.7.2
+PrettyTable>=0.7.2 # BSD-3-Clause
