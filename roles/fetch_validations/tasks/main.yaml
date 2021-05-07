@@ -6,7 +6,7 @@
     state: directory
   with_items:
     - "{{ log_path }}/validations-logs"
-    - "{{ zuul.executor.work_root }}/artifacts"
+    - "{{ artifacts_dir }}"
   loop_control:
     loop_var: vf_output_dir
 
