@@ -12,17 +12,12 @@
 
 - name: Collect logs and artifacts
   synchronize:
-    dest: "{{ vf_output.dest }}/"
+    dest: "{{ log_path }}/validations-logs"
     mode: pull
-    src: "{{ output_dir }}/{{ vf_output.src }}/"
+    src: "{{ output_dir }}/artifacts/"
     verify_host: true
     owner: false
     group: false
-  loop:
-    - dest: "{{ log_path }}/validations-logs"
-      src: "artifacts"
-  loop_control:
-    loop_var: vf_output
 
 - name: Find validations data
   find:
