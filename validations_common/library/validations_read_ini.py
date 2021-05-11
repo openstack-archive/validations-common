@@ -56,7 +56,7 @@ def get_result(path, section, key, default=None):
 
     msg = ''
     value = None
-    config = ConfigParser.SafeConfigParser()
+    config = ConfigParser.SafeConfigParser(strict=False)
 
     try:
         config.read(path)
