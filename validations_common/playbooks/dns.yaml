@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: localhost
   vars:
     metadata:
       name: Verify DNS

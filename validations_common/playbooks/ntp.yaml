@@ -1,5 +1,5 @@
 ---
-- hosts: overcloud
+- hosts: localhost
   vars:
     metadata:
       name: Verify all deployed servers have their clock synchronised

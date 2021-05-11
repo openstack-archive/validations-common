@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: localhost
   vars:
     metadata:
       name: Verify server fits the disk space requirements to perform an upgrade
