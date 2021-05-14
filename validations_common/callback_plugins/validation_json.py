@@ -31,7 +31,7 @@ DOCUMENTATION = '''
     description:
         - This callback converts all events into a JSON file
           stored in /var/log/validations
-    type: agregate
+    type: aggregate
     requirements: None
 '''
 
@@ -59,7 +59,7 @@ def secondsToStr(t):
 
 class CallbackModule(CallbackBase):
     CALLBACK_VERSION = 2.0
-    CALLBACK_TYPE = 'agregate'
+    CALLBACK_TYPE = 'aggregate'
     CALLBACK_NAME = 'validation_json'
 
     def __init__(self, display=None):
