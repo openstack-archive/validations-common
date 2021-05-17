@@ -61,6 +61,7 @@ class CallbackModule(CallbackBase):
     CALLBACK_VERSION = 2.0
     CALLBACK_TYPE = 'agregate'
     CALLBACK_NAME = 'validation_json'
+    CALLBACK_NEEDS_WHITELIST = True
 
     def __init__(self, display=None):
         super(CallbackModule, self).__init__(display)
