@@ -22,6 +22,7 @@ def exit_usage():
 
 
 def validate_library_file(file_path, quiet):
+
     with open(file_path) as f:
         file_content = f.read()
         if 'DOCUMENTATION = ' not in file_content \
@@ -30,6 +31,30 @@ def validate_library_file(file_path, quiet):
                 print('Missing ansible documentation in {}'.format(file_path))
             return 1
     return 0
+
+
+def validate_callback_file(file_path, quiet):
+    required_attributes = [
+        'CALLBACK_VERSION',
+        'CALLBACK_NAME']
+
+    with open(file_path) as file:
+        file_content = file.read()
+        if any([attr not in file_content for attr in required_attributes]):
+            if quiet < 3:
+                print(
+                    'Missing required callback plugin attributes in {}'.format(file_path))
+            return 1
+    return 0
+
+
+def validate_file(file_path, quiet):
+    if os.path.split(file_path)[0].endswith('library'):
+        return validate_library_file(file_path, quiet)
+    elif os.path.split(file_path)[0].endswith('callback_plugins'):
+        return validate_callback_file(file_path, quiet)
+    else:
+        raise ValueError()
 
 
 def parse_args():
@@ -52,28 +77,32 @@ def main():
     path_args = args.path_args
     quiet = args.quiet
     exit_val = 0
+    scanned_subdirs = ['callback_plugins', 'library']
     failed_files = []
 
     for base_path in path_args:
+        scanned_paths = [
+            os.path.join(
+                base_path,
+                'validations_common',
+                path) for path in scanned_subdirs]
+
         if os.path.isdir(base_path):
             for subdir, dirs, files in os.walk(base_path):
                 if '.tox' in dirs:
                     dirs.remove('.tox')
                 if '.git' in dirs:
                     dirs.remove('.git')
-                for f in files:
-                    if f.endswith('.py') \
-                            and not f == '__init__.py' \
-                            and subdir in [os.path.join(base_path,
-                                                        'validations_common',
-                                                        'library')]:
-                        file_path = os.path.join(subdir, f)
-                        if quiet < 1:
-                            print('Validating {}'.format(file_path))
-                        failed = validate_library_file(file_path, quiet)
-                        if failed:
-                            failed_files.append(file_path)
-                        exit_val |= failed
+                if subdir in scanned_paths:
+                    for f in files:
+                        if f.endswith('.py') and f != '__init__.py':
+                            file_path = os.path.join(subdir, f)
+                            if quiet < 1:
+                                print('Validating {}'.format(file_path))
+                            failed = validate_file(file_path, quiet)
+                            if failed:
+                                failed_files.append(file_path)
+                            exit_val |= failed
         else:
             print('Unexpected argument {}'.format(base_path))
             exit_usage()
