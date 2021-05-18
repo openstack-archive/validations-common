@@ -81,7 +81,7 @@ class TestValidationJson(base.TestCase):
         self.assertIn('CALLBACK_TYPE', dir(callback))
         self.assertEqual(callback.CALLBACK_NAME, 'validation_json')
         self.assertIsInstance(callback.CALLBACK_VERSION, float)
-        self.assertEqual(callback.CALLBACK_TYPE, 'agregate')
+        self.assertEqual(callback.CALLBACK_TYPE, 'aggregate')
         """
         Additionally, the 'validation_json' callback performs several
         other operations during instantiation.
