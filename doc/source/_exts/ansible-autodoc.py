@@ -265,36 +265,36 @@ class AnsibleAutoPluginDirective(Directive):
                 )
                 with open(molecule_file) as f:
                     molecule_conf = DOCYAML.load(f.read())
-
-                driver_data = molecule_conf.get('driver')
-                if driver_data:
-                    molecule_section.append(
-                        nodes.field_name(
-                            text='Driver: {}'.format(
-                                driver_data['name']
-                            )
-                        )
-                    )
-
-                    options = driver_data.get('options')
-                    if options:
+                if molecule_conf:
+                    driver_data = molecule_conf.get('driver')
+                    if driver_data:
                         molecule_section.append(
-                            self._yaml_section(
-                                to_yaml_data=options,
-                                section_title='Molecule Options'
+                            nodes.field_name(
+                                text='Driver: {}'.format(
+                                    driver_data['name']
+                                )
                             )
                         )
 
-                provisioner_data = molecule_conf.get('provisioner')
-                if provisioner_data:
-                    inventory = provisioner_data.get('inventory')
-                    if inventory:
-                        molecule_section.append(
-                            self._yaml_section(
-                                to_yaml_data=inventory,
-                                section_title='Molecule Inventory'
+                        options = driver_data.get('options')
+                        if options:
+                            molecule_section.append(
+                                self._yaml_section(
+                                    to_yaml_data=options,
+                                    section_title='Molecule Options'
+                                )
                             )
-                        )
+
+                    provisioner_data = molecule_conf.get('provisioner')
+                    if provisioner_data:
+                        inventory = provisioner_data.get('inventory')
+                        if inventory:
+                            molecule_section.append(
+                                self._yaml_section(
+                                    to_yaml_data=inventory,
+                                    section_title='Molecule Inventory'
+                                )
+                            )
 
                 molecule_playbook_path = os.path.join(
                     molecule_path,

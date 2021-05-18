@@ -44,7 +44,8 @@ def is_iso_time(time_string):
     with the default delimiter.
     Regex is somewhat convoluted, but general enough to last
     at least until the 9999 AD.
-    Returns:
+
+    :returns:
         True if string matches the pattern.
         False otherwise.
     """
