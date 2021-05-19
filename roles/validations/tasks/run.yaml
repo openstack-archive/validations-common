@@ -2,8 +2,13 @@
 - name: Run validations
   register: run_validation
   shell:
-    cmd: "{{ validation_command }} run --validation {{ name.key }} {{ validation_dir }} {{ ansible_dir }} \
-    --inventory {{ inventory }} --output-log validation_{{ name.key }}.log {{ name.value.extra_args }}"
+    cmd: >-
+      {{ validation_command }} run --validation {{ name.key }}
+      {{ validation_dir }} {{ ansible_dir }}
+      --inventory {{ inventory }}
+      --output-log validation_{{ name.key }}.log
+      {{ name.value.extra_args }}
+      {{ name.value.extra_env_args }}
     executable: /bin/bash
 
 - name: Get Run results
