@@ -129,6 +129,10 @@
 - job:
     files:
       - ^validations_common/roles/check_selinux_mode/.*
+      - ^tests/prepare-test-host.yml
+      - ^playbooks/molecule/pre.yml
+      - ^playbooks/molecule/run.yml
+      - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-check_selinux_mode
     parent: validations-common-centos-8-base
     vars:
@@ -137,6 +141,10 @@
 - job:
     files:
       - ^validations_common/roles/ntp/.*
+      - ^tests/prepare-test-host.yml
+      - ^playbooks/molecule/pre.yml
+      - ^playbooks/molecule/run.yml
+      - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-ntp
     parent: validations-common-centos-8-base
     vars:
@@ -145,6 +153,10 @@
 - job:
     files:
       - ^validations_common/roles/service_status/.*
+      - ^tests/prepare-test-host.yml
+      - ^playbooks/molecule/pre.yml
+      - ^playbooks/molecule/run.yml
+      - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-service_status
     parent: validations-common-centos-8-base
     vars:
@@ -153,6 +165,10 @@
 - job:
     files:
       - ^validations_common/roles/advanced_format_512e_support/.*
+      - ^tests/prepare-test-host.yml
+      - ^playbooks/molecule/pre.yml
+      - ^playbooks/molecule/run.yml
+      - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-advanced_format_512e_support
     parent: validations-common-centos-8-base
     vars:
@@ -161,6 +177,10 @@
 - job:
     files:
       - ^validations_common/roles/dns/.*
+      - ^tests/prepare-test-host.yml
+      - ^playbooks/molecule/pre.yml
+      - ^playbooks/molecule/run.yml
+      - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-dns
     parent: validations-common-centos-8-base
     vars:
@@ -168,6 +188,10 @@
 - job:
     files:
       - ^validations_common/roles/haproxy/.*
+      - ^tests/prepare-test-host.yml
+      - ^playbooks/molecule/pre.yml
+      - ^playbooks/molecule/run.yml
+      - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-haproxy
     parent: validations-common-centos-8-base
     vars:
@@ -175,6 +199,10 @@
 - job:
     files:
       - ^validations_common/roles/check_cpu/.*
+      - ^tests/prepare-test-host.yml
+      - ^playbooks/molecule/pre.yml
+      - ^playbooks/molecule/run.yml
+      - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-check_cpu
     parent: validations-common-centos-8-base
     vars:
@@ -182,6 +210,10 @@
 - job:
     files:
       - ^validations_common/roles/check_ram/.*
+      - ^tests/prepare-test-host.yml
+      - ^playbooks/molecule/pre.yml
+      - ^playbooks/molecule/run.yml
+      - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-check_ram
     parent: validations-common-centos-8-base
     vars:
@@ -189,6 +221,10 @@
 - job:
     files:
       - ^validations_common/roles/check_disk_space/.*
+      - ^tests/prepare-test-host.yml
+      - ^playbooks/molecule/pre.yml
+      - ^playbooks/molecule/run.yml
+      - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-check_disk_space
     parent: validations-common-centos-8-base
     vars:
@@ -196,6 +232,10 @@
 - job:
     files:
       - ^validations_common/roles/xfs_check_ftype/.*
+      - ^tests/prepare-test-host.yml
+      - ^playbooks/molecule/pre.yml
+      - ^playbooks/molecule/run.yml
+      - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-xfs_check_ftype
     parent: validations-common-centos-8-base
     vars:
@@ -204,6 +244,10 @@
 - job:
     files:
       - ^validations_common/roles/check_latest_packages_version/.*
+      - ^tests/prepare-test-host.yml
+      - ^playbooks/molecule/pre.yml
+      - ^playbooks/molecule/run.yml
+      - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-check_latest_packages_version
     parent: validations-common-centos-8-base
     vars:
@@ -211,6 +255,10 @@
 - job:
     files:
       - ^validations_common/roles/validate_selinux/.*
+      - ^tests/prepare-test-host.yml
+      - ^playbooks/molecule/pre.yml
+      - ^playbooks/molecule/run.yml
+      - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-validate_selinux
     parent: validations-common-centos-8-base
     vars:
