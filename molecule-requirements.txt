@@ -3,7 +3,8 @@ ansible>=2.8,!=2.8.9,!=2.9.12,<2.10.0 # GPLv3+
 ansi2html # LGPLv3+
 jinja2>=2.8.0 # BSD-3-Clause
 mock # BSD
-molecule>=3.0,<3.1 # MIT
+molecule>=3.3.1,<4 # MIT
+molecule-podman # MIT
 pytest # MIT
 pytest-cov # MIT
 pytest-html # Mozilla Public License 2.0
