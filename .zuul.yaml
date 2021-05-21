@@ -18,6 +18,18 @@
       - ^releasenotes/.*$
 
 - job:
+    name: validations-common-reqcheck
+    nodeset: centos-8
+    parent: base
+    run: playbooks/reqcheck.yaml
+    timeout: 1600
+    voting: false
+    required-projects:
+      - openstack/validations-common
+    files:
+      - ^requirements.txt$
+
+- job:
     description: Base validations-common job
     name: validations-common-centos-8-base
     nodeset: centos-8
@@ -47,6 +59,7 @@
       - validations-common-molecule-jobs
     check:
       jobs:
+        - validations-common-reqcheck
         - openstack-tox-linters
         - openstack-tox-cover
         - openstack-tox-py36

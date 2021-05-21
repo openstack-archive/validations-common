@@ -1,0 +1,45 @@
+---
+- hosts: all
+  name: validations-common-reqcheck
+  vars:
+    req_check_override: "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/.reqcheck_override.yaml"
+  tasks:
+    - name: Install rdopkg
+      changed_when: true
+      shell:
+        cmd: |
+          set -e
+          # Need to inherit system-site-packages for python-yum
+          sudo dnf install -y python3-virtualenv
+          virtualenv --system-site-packages {{ ansible_user_dir }}/.venv
+          source {{ ansible_user_dir }}/.venv/bin/activate
+          git clone https://github.com/softwarefactory-project/rdopkg.git
+          cd rdopkg
+          pip install .
+      args:
+        chdir: "{{ ansible_user_dir }}"
+
+    - name: Get distgit project info
+      changed_when: true
+      shell:
+        cmd: |
+          set -e
+          source {{ ansible_user_dir }}/.venv/bin/activate
+          rdopkg findpkg {{ zuul.project.name }} | sed -n "/^distgit/ s/distgit. \(.*\)/\1/p"
+      register: distgit
+      args:
+        chdir: "{{ ansible_user_dir }}"
+
+    - name: Clone distgit and reqcheck {{ zuul.project.name }} with rdopkg
+      changed_when: true
+      shell:
+        cmd: |
+          set -e
+          source {{ ansible_user_dir }}/.venv/bin/activate
+          git clone {{ distgit.stdout }}
+          cd validations-common-distgit
+          git remote add upstream {{ ansible_user_dir }}/{{ zuul.project.src_dir }}
+          git fetch upstream
+          rdopkg reqcheck --strict --override {{ req_check_override }}
+      args:
+        chdir: "{{ ansible_user_dir }}"
