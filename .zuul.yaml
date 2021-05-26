@@ -51,7 +51,7 @@
       featureset: '052'
       validate_services: true
       enable_validation: true
-      component: validation
+      validation_component: validation
 
 - project:
     templates:

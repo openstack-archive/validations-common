@@ -6,7 +6,7 @@ vf_log_dir: "{{ ansible_user_dir }}/logs"
 ansible_dir: ""
 
 inventory: "localhost"
-component: "{{ job.component|default('validation') }}"
+validation_component: "{{ job.component|default('validation') }}"
 # both commands can be used:
 # "openstack tripleo validator" or "validation"
 # the default is validation because this is the 1st entry available on
