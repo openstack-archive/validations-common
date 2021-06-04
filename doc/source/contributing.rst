@@ -4,6 +4,14 @@ Contributing
 
 .. include:: ../../CONTRIBUTING.rst
 
+Communication
+-------------
+* IRC channel ``#validation-framework`` at `Libera`_ (For all subject-matters)
+* IRC channel ``#tripleo`` at `OFTC`_ (OpenStack and TripleO discussions)
+
+.. _Libera: https://libera.chat/
+.. _OFTC: https://www.oftc.net/
+
 Contributor License Agreement
 -----------------------------
 
