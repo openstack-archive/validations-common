@@ -16,7 +16,7 @@ __metaclass__ = type
 import datetime
 import os
 
-from ansible.module_utils.six.moves import reduce
+from functools import reduce
 from ansible.plugins.callback import CallbackBase
 
 DOCUMENTATION = '''

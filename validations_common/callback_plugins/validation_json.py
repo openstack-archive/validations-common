@@ -19,8 +19,8 @@ import time
 import os
 
 from functools import partial
+from functools import reduce
 
-from ansible.module_utils.six.moves import reduce
 from ansible.parsing.ajson import AnsibleJSONEncoder
 from ansible.plugins.callback import CallbackBase
 
