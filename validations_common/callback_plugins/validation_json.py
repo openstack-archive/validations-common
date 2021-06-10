@@ -30,17 +30,16 @@ DOCUMENTATION = '''
     version_added: "1.0"
     description:
         - This callback converts all events into a JSON file
-          stored in /var/log/validations
+          stored in the selected validations logging directory,
+          as defined by the $VALIDATIONS_LOG_DIR env variable,
+          or the $HOME/validations by default.
     type: aggregate
     requirements: None
 '''
 
-VALIDATIONS_LOG_DIR = (os.getenv('VALIDATIONS_LOG_DIR')
-                       if os.getenv('VALIDATIONS_LOG_DIR') else
-                       ('/var/log/validations'
-                       if os.path.exists('/var/log/validations')
-                       and os.access('/var/log/validations', os.W_OK) else
-                       os.environ.get('PWD')))
+VALIDATIONS_LOG_DIR = os.environ.get(
+    'VALIDATIONS_LOG_DIR',
+    os.environ.get('HOME'))
 
 
 def current_time():
