@@ -29,7 +29,6 @@ from validations_common.tests import fakes
 
 from ansible.plugins.callback import CallbackBase
 
-import validations_common.library.reportentry as validation
 from validations_common.callback_plugins import validation_output
 
 

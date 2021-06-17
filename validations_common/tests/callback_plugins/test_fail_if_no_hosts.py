@@ -27,7 +27,6 @@ except ImportError:
 from validations_common.tests import base
 from validations_common.tests import fakes
 
-import validations_common.library.reportentry as validation
 from validations_common.callback_plugins import fail_if_no_hosts
 
 from ansible.plugins.callback import CallbackBase

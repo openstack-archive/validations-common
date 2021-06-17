@@ -34,7 +34,6 @@ from ansible.parsing.ajson import AnsibleJSONEncoder
 from ansible.playbook import Playbook
 from ansible.plugins.callback import CallbackBase
 
-import validations_common.library.reportentry as validation
 from validations_common.callback_plugins import validation_json
 
 

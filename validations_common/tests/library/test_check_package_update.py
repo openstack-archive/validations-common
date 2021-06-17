@@ -20,8 +20,6 @@ except ImportError:
 from validations_common.tests import base
 from validations_common.tests import fakes
 
-import subprocess
-
 from validations_common.library import check_package_update as cppkg
 
 PKG_INSTALLED = "foo-package|6.1.5|1|x86_64"
