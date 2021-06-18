@@ -27,9 +27,6 @@
       fail:
         msg: |
           Failed container detected.
-          On CI, please check the following locations
-          /var/log/extras/failed_containers.log
-          /var/log/extras/podman
       when: item is not match(".* Exited \(0\) .* ago")
       loop: "{{ failed_podman.stdout_lines }}"
 
@@ -50,9 +47,6 @@
       fail:
         msg: |
           Failed container detected.
-          On CI, please check the following locations
-          /var/log/extras/failed_containers.log
-          /var/log/extras/docker
       when:
         - failed_docker is defined
         - item is not match(".* Exited \(0\) .* ago")
