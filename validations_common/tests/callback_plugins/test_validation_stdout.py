@@ -19,7 +19,6 @@ test_validation_stdout
 Tests for `validation_stdout` callback plugin.
 
 """
-import os
 import re
 
 try:
@@ -30,7 +29,6 @@ except ImportError:
 from validations_common.tests import base
 from validations_common.tests import fakes
 
-import validations_common.library.reportentry as validation
 from validations_common.callback_plugins import validation_stdout
 
 from ansible.plugins.callback import CallbackBase
