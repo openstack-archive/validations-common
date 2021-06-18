@@ -30,7 +30,8 @@
         jsonres: 'results[*].Status'
 
     - fail:
-        msg: "Validation failed: some of the validations has failed."
-      when:
-        - item != "PASSED"
+        msg: "Validation failed with {{ validation_status }}: some of the validations has failed. {{ status }}"
+      when: validation_status != "PASSED"
       loop: "{{ status }}"
+      loop_control:
+        loop_var: validation_status
