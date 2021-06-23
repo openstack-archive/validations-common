@@ -1,2 +1,3 @@
 ---
+# Minimal number of CPU core
 minimal_cpu_count: 8
