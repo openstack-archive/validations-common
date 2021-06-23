@@ -1,4 +1,13 @@
 ---
+- name: Ensure we get needed facts
+  setup:
+    gather_subset:
+      - '!all'
+      - '!any'
+      - '!min'
+      - distribution
+      - os_family
+
 - name: Get current SELinux mode
   command: getenforce
   become: true
