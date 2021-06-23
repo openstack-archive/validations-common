@@ -34,7 +34,7 @@ At the command line using `pip`.
 
 .. code-block:: console
 
-    $ pip install validations-common
+    $ python3 -m pip install validations-common
 
 
 Or, if you have virtualenvwrapper_ installed.
@@ -42,17 +42,18 @@ Or, if you have virtualenvwrapper_ installed.
 .. code-block:: console
 
     $ mkvirtualenv validations-common
-    $ pip install validations-common
+    $ python3 -m pip install validations-common
 
 Installation with package manager
 ---------------------------------
-Alternativelly it is possible to install validations-common using package manager.
 
-Such as `yum`...
+Alternatively it is possible to install validations-common using package manager.
+
+Such as `yum` or `dnf`...
 
 .. code-block:: console
 
-    $ yum install validations-common
+    $ yum|dnf install validations-common
 
 
 or the more modern `dnf`.
@@ -72,9 +73,6 @@ to access the installed roles, playbooks, and libraries.
 While the validations-common can be run by itself,
 it nonetheless depends on Ansible and validations-libs.
 Therefore it isn't recommended to use only validations-common.
-
-The validations included with validations-common are intended to be demonstrations,
-capable of running on most setups. But they are not meant for production environment.
 
 .. _virtualenvwrapper: https://pypi.org/project/virtualenvwrapper/
 .. _Apache_license: http://www.apache.org/licenses/LICENSE-2.0
