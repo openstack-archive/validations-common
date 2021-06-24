@@ -1,5 +1,6 @@
 ---
 - hosts: localhost
+  gather_facts: false
   vars:
     metadata:
       name: Verify all deployed servers have their clock synchronised
