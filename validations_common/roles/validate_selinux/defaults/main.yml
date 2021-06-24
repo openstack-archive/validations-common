@@ -18,10 +18,28 @@
 # All variables intended for modification should place placed in this file.
 
 # All variables within this role should have a prefix of "validate_selinux"
-validate_selinux_working_dir: /var/log/validations
+
+# Base directory where the following files will be created:
+# - /tmp/denials-skip-list.txt (see validate_selinux_skip_list_dest variable below)
+# - /tmp/denials-filtered.log (see validate_selinux_filtered_denials_dest
+#                              variable below)
+validate_selinux_working_dir: /tmp
+
+# Absolute path to the auditd log file
 validate_selinux_audit_source: /var/log/audit/audit.log
+
+# Absolute path to the denials skip list file
 validate_selinux_skip_list_dest: "{{ validate_selinux_working_dir }}/denials-skip-list.txt"
+
+# Absolute path to the file which will contain the untracked SELinux AVCs found
 validate_selinux_filtered_denials_dest: "{{ validate_selinux_working_dir }}/denials-filtered.log"
+
+# If set to true, the validation will fail if untracked denials are found,
+# otherwise not.
 validate_selinux_strict: false
+
+# SELinux filter. Defaults to None
 validate_selinux_filter: "None"
+
+# Denials skip list
 validate_selinux_skip_list: {}
