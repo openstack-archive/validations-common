@@ -1,27 +1,29 @@
 ---
+# extra_env_vars variable should be formed as:
+# extra_env_vars: "--extra-env-vars key=value --extra-env-vars key2=value2"
 validations_list:
   compute:
     - nova-status:
         extra_args: ""
-        extra_env_args: ""
+        extra_env_args: "{{ extra_env_vars | default('') }}"
   network:
     - undercloud-neutron-sanity-check:
         extra_args: ""
-        extra_env_args: ""
+        extra_env_args: "{{ extra_env_vars | default('') }}"
   validation:
     - check-cpu:
         extra_args: "--extra-vars minimal_cpu_count=2"
-        extra_env_args: "--extra-env-vars ANSIBLE_STDOUT_CALLBACK=default"
+        extra_env_args: "--extra-env-vars ANSIBLE_STDOUT_CALLBACK=default {{ extra_env_vars | default('') }}"
     - 512e:
         extra_args: ""
         extra_env_args: ""
     - check-ram:
         extra_args: "--extra-vars minimal_ram_gb=2"
-        extra_env_args: "--extra-env-vars ANSIBLE_STDOUT_CALLBACK=default"
+        extra_env_args: "--extra-env-vars ANSIBLE_STDOUT_CALLBACK=default {{ extra_env_vars | default('') }}"
   tripleo:
     - undercloud-process-count:
         extra_args: ""
-        extra_env_args: ""
+        extra_env_args: "{{ extra_env_vars | default('') }}"
 validations_group:
   compute:
     - compute

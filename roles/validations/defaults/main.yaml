@@ -14,5 +14,5 @@ validation_component: "{{ job.component|default('validation') }}"
 # The openstack command needs to install python-tripleoclient and its
 # dependencies first. This value should be override as needed in the roles/vars
 # calls.
-command: "validation"
+cli_command: "validation"
 run_validation: true

@@ -16,8 +16,10 @@
 
 - name: Set commmand if virtualenv exists
   set_fact:
-    validation_command: "source {{ zuul_work_virtualenv }}/bin/activate; validation"
-  when: is_virtualenv.stat.exists
+    validation_command: "source {{ zuul_work_virtualenv }}/bin/activate; {{ cli_command }}"
+  when:
+    - is_virtualenv.stat.exists
+    - validation_command is not defined
 
 - name: Set Validation directory if virtualenv exists
   set_fact:
@@ -31,8 +33,10 @@
 
 - name: Set commmand without virtualenv
   set_fact:
-    validation_command: "validation"
-  when: not is_virtualenv.stat.exists
+    validation_command: "{{ cli_command }}"
+  when:
+    - not is_virtualenv.stat.exists
+    - validation_command is not defined
 
 - name: Set validation dir without virtualenv
   set_fact:
