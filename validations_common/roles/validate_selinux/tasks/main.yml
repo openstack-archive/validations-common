@@ -58,6 +58,7 @@
   shell: |
     set -o pipefail
     grep -i denied {{ validate_selinux_audit_source }} > /tmp/denials.log || (echo "No denials found in auditlog"; exit 0)
+    chmod 0600 /tmp/denials.log
 
 - name: Get stat for denials.log
   stat:
@@ -77,7 +78,7 @@
       template:
         src: skip-list.j2
         dest: "{{ validate_selinux_skip_list_dest }}"
-        mode: 0644
+        mode: 0600
 
     - name: Filter out denials
       when: validate_selinux_skip_list != {}
@@ -86,6 +87,7 @@
       shell: |
         set -o pipefail
         grep -v -f {{ validate_selinux_skip_list_dest }} /tmp/denials.log > {{ validate_selinux_filtered_denials_dest }}
+        chmod 0600 {{ validate_selinux_filtered_denials_dest }}
 
     - name: No skip_list
       when: validate_selinux_skip_list == {}
@@ -93,6 +95,7 @@
         remote_src: true
         src: /tmp/denials.log
         dest: "{{ validate_selinux_filtered_denials_dest }}"
+        mode: 0600
 
     - name: Get stat for filtered denials
       stat:
