@@ -26,6 +26,7 @@ from docutils.writers.html4css1 import Writer
 from sphinx import addnodes
 
 import yaml
+from ruamel.yaml import YAML as RYAML
 
 try:
     import io
@@ -34,17 +35,14 @@ except ImportError:
     import StringIO
 
 
-class DocYaml:
-    """
-    Wrapper clas around calls to yaml lib.
-    """
+class DocYaml(RYAML):
     def _license_filter(self, data):
         """This will filter out our boilerplate license heading in return data.
 
         The filter is used to allow documentation we're creating in variable
         files to be rendered more beautifully.
         """
-        lines = []
+        lines = list()
         mark = True
         for line in data.splitlines():
             if '# Copyright' in line:
@@ -59,15 +57,14 @@ class DocYaml:
         if not stream:
             stream = StringIO()
         try:
-            yaml.dump(data=data, stream=stream, Dumper=yaml.Dumper, **kw)
+            RYAML.dump(self, data, stream, **kw)
             return self._license_filter(stream.getvalue().strip())
         finally:
             stream.close()
 
-    def load(self, data):
-        return yaml.load(data, Loader=yaml.Loader)
 
 DOCYAML = DocYaml()
+DOCYAML.default_flow_style = False
 
 
 class AnsibleAutoPluginDirective(Directive):
@@ -208,28 +205,37 @@ class AnsibleAutoPluginDirective(Directive):
 
     def _run_role(self, role):
         section = self._section_block(
-            title='Role Documentation',
-            text='Welcome to the "{}" role documentation.'.format(
+            title="Role Documentation",
+            text="Welcome to the '{}' role documentation.".format(
                 os.path.basename(role)
-            )
+            ),
         )
-        defaults_file = os.path.join(role, 'defaults', 'main.yml')
+
+        molecule_defaults = None
+        abspath_role = os.path.dirname(os.path.abspath(role))
+        molecule_shared_file = os.path.join(
+            os.path.dirname(abspath_role), "../.config/molecule/config.yml"
+        )
+
+        if os.path.exists(molecule_shared_file):
+            with open(molecule_shared_file) as msf:
+                molecule_defaults = DOCYAML.load(msf.read())
+
+        defaults_file = os.path.join(role, "defaults", "main.yml")
         if os.path.exists(defaults_file):
             with open(defaults_file) as f:
                 role_defaults = DOCYAML.load(f.read())
             section.append(
                 self._yaml_section(
                     to_yaml_data=role_defaults,
-                    section_title='Role Defaults',
-                    section_text='This section highlights all of the defaults'
-                                 ' and variables set within the "{}"'
-                                 ' role.'.format(
-                                     os.path.basename(role)
-                                 )
+                    section_title="Role Defaults",
+                    section_text="This section highlights all of the defaults"
+                    " and variables set within the '{}'"
+                    " role.".format(os.path.basename(role)),
                 )
             )
 
-        vars_path = os.path.join(role, 'vars')
+        vars_path = os.path.join(role, "vars")
         if os.path.exists(vars_path):
             for v_file in os.listdir(vars_path):
                 vars_file = os.path.join(vars_path, v_file)
@@ -238,81 +244,96 @@ class AnsibleAutoPluginDirective(Directive):
                 section.append(
                     self._yaml_section(
                         to_yaml_data=vars_values,
-                        section_title='Role Variables: {}'.format(v_file)
+                        section_title="Role Variables: {}".format(v_file),
                     )
                 )
 
         test_list = nodes.field_list()
         test_section = self._section_block(
-            title='Molecule Scenarios',
-            text='Molecule is being used to test the "{}" role. The'
-                 ' following section highlights the drivers in service'
-                 ' and provides an example playbook showing how the role'
-                 ' is leveraged.'.format(
-                     os.path.basename(role)
-                 )
+            title="Molecule Scenarios",
+            text="Molecule is being used to test the '{}' role. The"
+            " following section highlights the drivers in service"
+            " and provides an example playbook showing how the role"
+            " is leveraged.".format(os.path.basename(role)),
         )
-        molecule_path = os.path.join(role, 'molecule')
+
+        molecule_path = os.path.join(role, "molecule")
         if os.path.exists(molecule_path):
             for test in os.listdir(molecule_path):
                 molecule_section = self._section_block(
-                    title='Scenario: {}'.format(test)
+                    title="Scenario: {}".format(test)
                 )
-                molecule_file = os.path.join(
-                    molecule_path,
-                    test,
-                    'molecule.yml'
-                )
+                molecule_file = os.path.join(molecule_path, test, "molecule.yml")
+                if not os.path.exists(molecule_file):
+                    continue
+
                 with open(molecule_file) as f:
                     molecule_conf = DOCYAML.load(f.read())
-                if molecule_conf:
-                    driver_data = molecule_conf.get('driver')
-                    if driver_data:
+
+                # if molecule.yml file from the scenarios, we get the
+                # information from the molecule shared configuration file.
+                if not molecule_conf:
+                    molecule_conf = molecule_defaults
+
+                # Now that we use a shared molecule configuration file, the
+                # molecule.yml file in the role scenarios could be empty or
+                # contains only overriding keys.
+                driver_data = molecule_conf.get('driver',
+                                                molecule_defaults.get('driver'))
+
+                if driver_data:
+                    molecule_section.append(
+                        nodes.field_name(text="Driver: {}".format(driver_data["name"]))
+                    )
+
+                    options = driver_data.get("options")
+                    if options:
                         molecule_section.append(
-                            nodes.field_name(
-                                text='Driver: {}'.format(
-                                    driver_data['name']
-                                )
+                            self._yaml_section(
+                                to_yaml_data=options, section_title="Molecule Options"
                             )
                         )
 
-                        options = driver_data.get('options')
-                        if options:
-                            molecule_section.append(
-                                self._yaml_section(
-                                    to_yaml_data=options,
-                                    section_title='Molecule Options'
-                                )
-                            )
+                platforms_data = molecule_conf.get('platforms',
+                                                   molecule_defaults.get('platforms'))
 
-                    provisioner_data = molecule_conf.get('provisioner')
-                    if provisioner_data:
-                        inventory = provisioner_data.get('inventory')
-                        if inventory:
-                            molecule_section.append(
-                                self._yaml_section(
-                                    to_yaml_data=inventory,
-                                    section_title='Molecule Inventory'
-                                )
-                            )
-
-                molecule_playbook_path = os.path.join(
-                    molecule_path,
-                    test,
-                    'converge.yml'
-                )
-                if not os.path.exists(molecule_playbook_path):
-                    molecule_playbook_path = os.path.join(
-                        molecule_path,
-                        test,
-                        'playbook.yml'
+                if platforms_data:
+                    molecule_section.append(
+                        self._yaml_section(
+                            to_yaml_data=platforms_data,
+                            section_title="Molecule Platform(s)",
+                        )
                     )
+
+                default_playbook = [molecule_path, test, "converge.yml"]
+
+                provisioner_data = molecule_conf.get('provisioner',
+                                                     molecule_defaults.get('provisioner'))
+
+                if provisioner_data:
+                    inventory = provisioner_data.get('inventory')
+                    if inventory:
+                        molecule_section.append(
+                            self._yaml_section(
+                                to_yaml_data=inventory,
+                                section_title="Molecule Inventory",
+                            )
+                        )
+
+                    try:
+                        converge = provisioner_data['playbooks']['converge']
+                        default_playbook = default_playbook[:-1] + [converge]
+                    except KeyError:
+                        pass
+
+                molecule_playbook_path = os.path.join(*default_playbook)
+
                 with open(molecule_playbook_path) as f:
                     molecule_playbook = DOCYAML.load(f.read())
                 molecule_section.append(
                     self._yaml_section(
                         to_yaml_data=molecule_playbook,
-                        section_title='Example {} playbook'.format(test)
+                        section_title="Example {} playbook".format(test),
                     )
                 )
                 test_list.append(molecule_section)
@@ -323,21 +344,18 @@ class AnsibleAutoPluginDirective(Directive):
         self.run_returns.append(section)
 
         # Document any libraries nested within the role
-        library_path = os.path.join(role, 'library')
+        library_path = os.path.join(role, "library")
         if os.path.exists(library_path):
             self.options['documentation'] = True
             self.options['examples'] = True
             for lib in os.listdir(library_path):
-                if lib.endswith('.py'):
+                if lib.endswith(".py"):
                     self._run_module(
                         module=self.load_module(
-                            filename=os.path.join(
-                                library_path,
-                                lib
-                            )
+                            filename=os.path.join(library_path, lib)
                         ),
-                        module_title='Embedded module: {}'.format(lib),
-                        example_title='Examples for embedded module'
+                        module_title="Embedded module: {}".format(lib),
+                        example_title="Examples for embedded module",
                     )
 
     def _run_module(self, module, module_title="Module Documentation",
