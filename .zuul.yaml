@@ -65,19 +65,13 @@
         - openstack-tox-py36
         - openstack-tox-py39
         - validations-common-functional
-        - tripleo-ci-centos-8-content-provider:
+        - tripleo-ci-centos-8-standalone-validation-common:
+            vars: &consumer_vars
+              build_container_images: true
             dependencies:
               - openstack-tox-linters
               - openstack-tox-cover
               - validations-common-functional
-        - tripleo-ci-centos-8-standalone-validation-common:
-            vars: &consumer_vars
-              consumer_job: true
-              build_container_images: false
-              remove_tags:
-                - build
-            dependencies:
-              - tripleo-ci-centos-8-content-provider
         - openstack-tox-docs: &tripleo-docs
             files:
               - ^doc/.*
@@ -89,14 +83,11 @@
         - openstack-tox-py36
         - openstack-tox-py39
         - validations-common-functional
-        - tripleo-ci-centos-8-content-provider:
-            dependencies:
-              - openstack-tox-linters
-              - validations-common-functional
         - tripleo-ci-centos-8-standalone-validation-common:
             vars: *consumer_vars
             dependencies:
-              - tripleo-ci-centos-8-content-provider
+              - openstack-tox-linters
+              - validations-common-functional
         - openstack-tox-docs: *tripleo-docs
     promote:
       jobs:
