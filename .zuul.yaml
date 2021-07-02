@@ -28,6 +28,17 @@
       - openstack/validations-common
     files:
       - ^requirements.txt$
+- job:
+    name: validations-common-coverchange
+    nodeset: centos-8
+    parent: base
+    run: playbooks/coverchange.yaml
+    timeout: 1600
+    voting: false
+    required-projects:
+      - openstack/validations-common
+    files:
+      - ^validations_common/.*
 
 - job:
     description: Base validations-common job
@@ -60,6 +71,7 @@
     check:
       jobs:
         - validations-common-reqcheck
+        - validations-common-coverchange
         - openstack-tox-linters
         - openstack-tox-cover
         - openstack-tox-py36
