@@ -108,14 +108,18 @@
         - validate_selinux_strict|bool
         - denials_stat.stat.size != 0
       fail:
-        msg: "Untracked SELinux AVCs found, please refer to {{ validate_selinux_filtered_denials_dest }}"
+        msg: >-
+          [STRICT MODE ON]
+          Untracked SELinux AVCs found, please refer to {{ validate_selinux_filtered_denials_dest }}
 
     - name: Output information in case we do not fail
       when:
         - not validate_selinux_strict|bool
         - denials_stat.stat.size != 0
-      debug:
-        msg: "Untracked SELinux AVCs found, please refer to {{ validate_selinux_filtered_denials_dest }}"
+      warn:
+        msg: >-
+          [STRICT MODE OFF]
+          Untracked SELinux AVCs found, please refer to {{ validate_selinux_filtered_denials_dest }}
 
     - name: Output information if everything is fine
       when: denials_stat.stat.size == 0
