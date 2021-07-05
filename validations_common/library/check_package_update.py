@@ -109,6 +109,9 @@ def get_package_details(pkg_details_string):
     """Returns PackageDetails namedtuple from given string.
     Raises ValueError if the number of '|' separated
     fields is < 4.
+
+    :return: package details
+    :rtype: collections.namedtuple
     """
     split_output = pkg_details_string.split('|')
     try:
@@ -143,8 +146,11 @@ def _allowed_pkg_manager_stderr(stderr, allowed_errors):
 
 def _command(command):
     """
-    :returns: the result of a subprocess call
-    as a tuple (stdout, stderr).
+    Return result of a subprocess call.
+    Doesn't set timeout for the call, so the process can hang.
+    Potentially for a very long time.
+    :return: stdout and stderr from Popen.communicate()
+    :rtype: tuple
     """
     process = subprocess.Popen(
         command,
@@ -229,6 +235,17 @@ def check_update(module, packages_list, pkg_mgr):
     """Check if the packages in the 'packages_list are up to date.
     Queries binaries, defined the in relevant SUPPORTED_PKG_MGRS entry,
     to obtain information about present and available packages.
+
+    :param module: ansible module providing fail_json and exit_json
+                   methods
+    :type module: AnsibleModule
+    :param packages_list: list of packages to be checked
+    :type package: list
+    :param pkg_mgr: Package manager to check for update availability
+    :type pkg_mgr: string
+
+    :return: None
+    :rtype: None
     """
     if len(packages_list) == 0:
         module.fail_json(
