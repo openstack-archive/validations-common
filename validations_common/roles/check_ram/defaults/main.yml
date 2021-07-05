@@ -1,2 +1,3 @@
 ---
+# Minimal amount of RAM (in GB)
 minimal_ram_gb: 24
