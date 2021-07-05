@@ -1,4 +1,8 @@
 ---
+# Volumes partitioning schema
+# A list of dictionary.ies containing:
+# - mount point(s)
+# - min_size (Minimum free space required in GB)
 volumes:
   - {mount: /var/lib/docker, min_size: 10}
   - {mount: /var/lib/config-data, min_size: 3}
