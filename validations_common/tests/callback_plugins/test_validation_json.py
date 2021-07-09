@@ -290,7 +290,10 @@ class TestValidationJson(base.TestCase):
         mock_new_task.assert_called_once_with(callback, mock_task)
         self.assertIn({'task': {'host': 'foo'}}, callback.results[0]['tasks'])
 
-    @mock.patch('json.dumps', return_value='json_dump_foo')
+    @mock.patch(
+        'json.dumps',
+        return_value='json_dump_foo',
+        autospec=True)
     @mock.patch(
         'validations_common.callback_plugins.validation_json.open',
         create=True)
@@ -343,6 +346,79 @@ class TestValidationJson(base.TestCase):
         }
 
         callback.v2_playbook_on_stats(dummy_stats)
+        mock_write = mock_open.return_value.__enter__.return_value.write
+
+        mock_open.assert_called_once_with(log_file, 'w')
+        mock_json_dumps.assert_called_once_with(output, **kwargs)
+        mock_write.assert_called_once_with('json_dump_foo')
+
+    @mock.patch(
+        'json.dumps',
+        return_value='json_dump_foo',
+        autospec=True)
+    @mock.patch(
+        'validations_common.callback_plugins.validation_json.open',
+        create=True)
+    def test_v2_playbook_on_no_hosts_matched(self, mock_open,
+                                             mock_json_dumps):
+
+        results = [
+            {
+                'play': {
+                    'id': 'fizz'
+                }
+            }
+        ]
+        validation_task = {
+            'task': {
+                'name': 'No tasks run',
+                'hosts': {}}}
+
+        validation_json.VALIDATIONS_LOG_DIR = '/home/foo/validations'
+
+        callback = validation_json.CallbackModule()
+        dummy_stats = AggregateStats()
+
+        callback.results = results
+        callback.simple_results = results
+        callback.env['playbook_name'] = 'foo'
+        callback.current_time = 'foo-bar-fooTfoo:bar:foo.fizz'
+
+        dummy_stats.processed['foohost'] = 5
+
+        no_match_result = validation_task
+        no_match_result['task']['status'] = "FAILED"
+        no_match_result['task']['info'] = (
+            "None of the hosts specified"
+            " were matched in the inventory file")
+
+        output = {
+            'plays': results,
+            'stats': {
+                'No host matched':{
+                    'changed': 0,
+                    'failures': 1,
+                    'ignored': 0,
+                    'ok': 0,
+                    'rescued': 0,
+                    'skipped': 0,
+                    'unreachable': 0}},
+            'validation_output': results + [no_match_result]
+        }
+
+        log_file = "{}/{}_{}_{}.json".format(
+            "/home/foo/validations",
+            'fizz',
+            'foo',
+            'foo-bar-fooTfoo:bar:foo.fizz')
+
+        kwargs = {
+            'cls': AnsibleJSONEncoder,
+            'indent': 4,
+            'sort_keys': True
+        }
+
+        callback.v2_playbook_on_no_hosts_matched()
         mock_write = mock_open.return_value.__enter__.return_value.write
 
         mock_open.assert_called_once_with(log_file, 'w')

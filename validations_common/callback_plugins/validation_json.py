@@ -187,6 +187,41 @@ class CallbackModule(CallbackBase):
             result['play']['duration']['end'] = end_time
             result['play']['duration']['time_elapsed'] = time_elapsed
 
+    def v2_playbook_on_no_hosts_matched(self):
+        no_match_result = self._val_task('No tasks run')
+        no_match_result['task']['status'] = "FAILED"
+        no_match_result['task']['info'] = (
+            "None of the hosts specified"
+            " were matched in the inventory file")
+
+        output = {
+            'plays': self.results,
+            'stats': {
+                'No host matched':{
+                    'changed': 0,
+                    'failures': 1,
+                    'ignored': 0,
+                    'ok': 0,
+                    'rescued': 0,
+                    'skipped': 0,
+                    'unreachable': 0}},
+            'validation_output': self.simple_results + [no_match_result]
+        }
+
+        log_file = "{}/{}_{}_{}.json".format(
+            VALIDATIONS_LOG_DIR,
+            os.getenv(
+                'ANSIBLE_UUID',
+                self.results[0].get('play').get('id')),
+            self.env['playbook_name'],
+            self.current_time)
+
+        with open(log_file, 'w') as js:
+            js.write(json.dumps(output,
+                                cls=AnsibleJSONEncoder,
+                                indent=4,
+                                sort_keys=True))
+
     def __getattribute__(self, name):
         """Return ``_record_task_result`` partial with a dict
            containing skipped/failed if necessary
