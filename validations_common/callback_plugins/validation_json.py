@@ -39,7 +39,7 @@ DOCUMENTATION = '''
 
 VALIDATIONS_LOG_DIR = os.environ.get(
     'VALIDATIONS_LOG_DIR',
-    os.environ.get('HOME'))
+    os.path.expanduser('~/validations'))
 
 
 def current_time():
