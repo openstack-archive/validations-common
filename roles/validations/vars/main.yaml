@@ -12,12 +12,16 @@ validations_list:
         extra_env_args: "{{ extra_env_vars | default('') }}"
   validation:
     - check-cpu:
+        negative_results:
+          extra_args: "--extra-vars minimal_cpu_count=20000"
         extra_args: "--extra-vars minimal_cpu_count=2"
         extra_env_args: "--extra-env-vars ANSIBLE_STDOUT_CALLBACK=default {{ extra_env_vars | default('') }}"
     - 512e:
         extra_args: ""
         extra_env_args: ""
     - check-ram:
+        negative_results:
+          extra_args: "--extra-vars minimal_ram_gb=2000000"
         extra_args: "--extra-vars minimal_ram_gb=2"
         extra_env_args: "--extra-env-vars ANSIBLE_STDOUT_CALLBACK=default {{ extra_env_vars | default('') }}"
   tripleo:

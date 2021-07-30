@@ -7,7 +7,7 @@
 - name: set fact for Validation action
   set_fact: v_action="{{ action }}"
 
-- name: Get Run results
+- name: Get Run results - Positive - these are supposed to pass
   block:
     - name: Get run results
       register: result
@@ -26,9 +26,39 @@
         jsonres: 'results[*].Status'
 
     - fail:
-        msg: "Validation failed with {{ validation_status }}: some of the validations has failed. {{ status }}"
+        msg: "Validation failed with {{ validation_status }}: some of the validations have failed. {{ status }}"
       when: validation_status != "PASSED"
       loop: "{{ status }}"
       loop_control:
         loop_var: validation_status
-  when: v_action == "run"
+  when: v_action == 'run'
+
+- name: Get Run results - Negative - these are supposed to fail
+  # This task should fail with return code != 0
+  # The validation is supplied with parameters that make it impossible to pass.
+  block:
+    - name: Get run results
+      register: result
+      shell:
+        cmd: "cat {{ val_output }}"
+        executable: /bin/bash
+
+    - name: Get json data
+      set_fact:
+        jsondata: "{{ result.stdout | from_json }}"
+
+    - name: Get Validations Status
+      set_fact:
+        status: "{{ jsondata | json_query(jsonres) }}"
+      vars:
+        jsonres: 'results[*].Status'
+
+    - fail:
+        msg: "Validation passed with {{ validation_status }} when it shouldn't have: some of the validations have passed. {{ status }}"
+      when: validation_status == "PASSED"
+      loop: "{{ status }}"
+      loop_control:
+        loop_var: validation_status
+  when:
+    - v_action == 'run'
+    - "'negative_results' in name.value"
