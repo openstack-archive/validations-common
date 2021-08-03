@@ -1,6 +1,36 @@
 ---
-- name: List Validation
-  register: list_output
+- name: List Validations - all - to file
   shell:
     cmd: "{{ validation_command }} list {{ validation_dir }} -f json > {{ val_working_dir }}/list.log 2>&1"
     executable: /bin/bash
+  when: val_format == "json"
+
+- name: List Validations - all - to stdout - {{ val_format }}
+  shell:
+    cmd: "{{ validation_command }} list {{ validation_dir }} -f {{ val_format }}"
+    executable: /bin/bash
+
+# Metadata dependent list output
+- name: List Validations - group - to stdout - {{ val_format }}
+  shell:
+    cmd: "{{ validation_command }} list {{ validation_dir }} --group {{ val_group }} -f {{ val_format }}"
+    executable: /bin/bash
+  loop: "{{ validation_metadata.group }}"
+  loop_control:
+    loop_var: val_group
+
+- name: " List Validations - category - to stdout - {{ val_format }} "
+  shell:
+    cmd: "{{ validation_command }} list {{ validation_dir }} --category {{ val_category }} -f {{ val_format }}"
+    executable: /bin/bash
+  loop: "{{ validation_metadata.category }}"
+  loop_control:
+    loop_var: val_category
+
+- name: "List Validations - product - to stdout - {{ val_format }}"
+  shell:
+    cmd: "{{ validation_command }} list {{ validation_dir }} --product {{ val_product }} -f {{ val_format }}"
+    executable: /bin/bash
+  loop: "{{ validation_metadata.product }}"
+  loop_control:
+    loop_var: val_product

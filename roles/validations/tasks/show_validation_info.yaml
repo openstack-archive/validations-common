@@ -1,0 +1,33 @@
+---
+- name: Show Validation - correct id
+  register: show_output
+  shell:
+    cmd: "{{ validation_command }} show {{ validation_dir }} {{ name.key }} -f json > {{ val_working_dir }}/show.log 2>&1"
+    executable: /bin/bash
+
+# Simulating a typo in the validation name
+- name: Show Validation - incorrect id
+  block:
+    - name: Show validations - incorrect id
+      register: show_output_incorrect
+      shell:
+        cmd: "{{ validation_command }} show {{ validation_dir }} chuck-cpu -f json 2>&1 | tee {{val_working_dir}}/show_typo.log"
+        executable: /bin/bash
+      ignore_errors: true
+    - fail:
+        msg: "The expected error message was not displayed."
+      when: "'Validation chuck-cpu not found' not in show_output_incorrect.stdout"
+
+- name: Show Validation parameters
+  shell:
+    cmd: >-
+     {{ validation_command }} show parameter
+     --validation {{ name.key }} {{ validation_dir }}
+     --download {{ name.key }}_params.{{ format_type }}
+     --format-output {{ format_type }}
+    executable: /bin/bash
+  loop:
+    - json
+    - yaml
+  loop_control:
+    loop_var: format_type

@@ -1,0 +1,41 @@
+---
+- name: Create extra vars file
+  shell:
+    cmd: "echo -e 'minimal_cpu_count: 2\nminimal_ram_gb: 2\n' > {{ extra_vars_uuid }}extra_vars.yaml"
+    executable: /bin/bash
+
+- name: Run validations with extra vars file
+  shell:
+    cmd: >-
+      {{ validation_command }} run --validation {{ name.key }}
+      {{ validation_dir }} {{ ansible_dir }}
+      --inventory {{ inventory }}
+      --output-log validation_{{ name.key }}_extra_vars_file.log
+      --extra-vars-file {{ extra_vars_uuid }}extra_vars.yaml
+      {{ name.value.extra_env_args }}
+    executable: /bin/bash
+
+- name: Get Run results
+  block:
+    - name: Get run results
+      register: result
+      shell:
+        cmd: "cat validation_{{ name.key }}_extra_vars_file.log"
+        executable: /bin/bash
+
+    - name: Get json data
+      set_fact:
+        jsondata: "{{ result.stdout | from_json }}"
+
+    - name: Get Validations Status
+      set_fact:
+        status: "{{ jsondata | json_query(jsonres) }}"
+      vars:
+        jsonres: 'results[*].Status'
+
+    - fail:
+        msg: "Validation failed with {{ validation_status }}: some of the validations has failed. {{ status }}"
+      when: validation_status != "PASSED"
+      loop: "{{ status }}"
+      loop_control:
+        loop_var: validation_status

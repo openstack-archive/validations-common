@@ -1,0 +1,52 @@
+---
+# The subcommand used is 'show history' but it is implemented
+# as a subclass of Lister and it formats the results as such.
+# Both tests use regex to keep only lines starting with UUID[1].
+# As every validation run has UUID assigned and the 'value' output format
+# places it's octal form in the first column, it is possible to use it to
+# match only records about validation runs, and remove the rest.
+# [1]https://datatracker.ietf.org/doc/html/rfc4122#section-4.1
+- name: List all history
+  register: list_all_history_output
+  shell:
+    cmd: >-
+     {{ validation_command }} {{ history_command }} -f value 2>&1
+     | grep "^[[:alnum:]]\{8\}-[[:alnum:]]\{4\}-[[:alnum:]]\{4\}-[[:alnum:]]\{4\}-[[:alnum:]]\{12\}"
+     | tee {{ val_working_dir }}/full_validation_history.log
+    executable: /bin/bash
+
+- name: List truncated history
+  register: list_truncated_history_output
+  shell:
+    cmd: >-
+     {{ validation_command }} {{ history_command }} --limit 1 -f value 2>&1
+     | grep "^[[:alnum:]]\{8\}-[[:alnum:]]\{4\}-[[:alnum:]]\{4\}-[[:alnum:]]\{4\}-[[:alnum:]]\{12\}"
+     | tee {{ val_working_dir }}/truncated_validation_history.log
+    executable: /bin/bash
+
+- name: Verify history output
+  block:
+    # To ensure that we are getting the right number of validation runs
+    # we are querying the relevant item of the 'validations_list', for the number of 'extra_args' entries.
+    # As all validations defined in the 'validations_list' have 'extra_args' defined for both normal,
+    # and false positive run, we can use the number of 'extra_args' keys as an indication
+    # of the validations runs that were supposed to occur.
+    # Please note that this assertion will not hold, if the format of the default_vars changes substantially.
+    - name: Verify full history output
+      fail:
+        msg: >
+         The history output length {{ list_all_history_output.stdout_lines | length }}
+         doesn't match the number of expected validations runs {{ expected_history_length }}.
+      when: (list_all_history_output.stdout_lines | length) != (expected_history_length | int)
+      vars:
+        expected_history_length: "{{ validations_list[validation_component] | string | regex_findall('extra_args') | length }}"
+
+    - name: Verify truncated history output
+      fail:
+        msg: >
+         The number of history items displayed is {{ list_truncated_history_output.stdout_lines | length }}
+         but it should be 1.
+      when: (list_truncated_history_output.stdout_lines | length) != 1
+  when:
+    - run_validation|default(false)|bool
+    - validation_component | length > 0

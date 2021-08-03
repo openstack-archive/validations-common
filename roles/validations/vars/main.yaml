@@ -39,3 +39,20 @@ validations_group:
     - compute
   network:
     - network
+
+validation_metadata:
+  group:
+    - no-op
+    - prep
+  category:
+    - storage
+    - container
+  product:
+    - tripleo
+
+validation_list_formats:
+  - csv
+  - json
+  - table
+  - value
+  - yaml

@@ -43,7 +43,8 @@
     validation_dir: "--validation-dir /usr/share/ansible/validation-playbooks"
   when: not is_virtualenv.stat.exists
 
-- include_tasks: run.yaml
+- name: Run validations
+  include_tasks: run.yaml
   vars:
     name: "{{ item }}"
   when:
@@ -51,7 +52,16 @@
     - validation_component | length > 0
   with_dict: "{{ validations_list[validation_component] }}"
 
-- include_tasks: show.yaml
+- name: List validations
+  include_tasks: list.yaml
+  vars:
+    val_format: "{{ tested_format }}"
+  loop: "{{ validation_list_formats }}"
+  loop_control:
+    loop_var: tested_format
+
+- name: Show validation run results
+  include_tasks: show_results.yaml
   vars:
     name: "{{ item }}"
   when:
@@ -59,4 +69,26 @@
     - validation_component | length > 0
   with_dict: "{{ validations_list[validation_component] }}"
 
-- include_tasks: list.yaml
+- name: Show validation
+  include_tasks: show_validation_info.yaml
+  vars:
+    name: "{{ item }}"
+  when:
+    - run_validation|default(false)|bool
+    - validation_component | length > 0
+  with_dict: "{{ validations_list[validation_component] }}"
+
+- name: List history
+  include_tasks: list_validation_history.yaml
+  vars:
+    history_command: "{{'show history' if validation_command == 'openstack tripleo validator' else 'history list'}}"
+
+- name: Run validations with extra vars file
+  include_tasks: run_extra_vars_file.yaml
+  vars:
+    name: "{{ item }}"
+    extra_vars_uuid: "{{ 'extra vars for tests' | to_uuid }}"
+  when:
+    - run_validation|default(false)|bool
+    - validation_component | length > 0
+  with_dict: "{{ validations_list[validation_component] }}"

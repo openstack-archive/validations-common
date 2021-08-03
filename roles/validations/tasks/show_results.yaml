@@ -1,0 +1,21 @@
+---
+- name: Get run UUID
+  block:
+    - name: Get run results file
+      register: result
+      shell:
+        cmd: "cat validation_{{ name.key }}_positive.log"
+        executable: /bin/bash
+    - name: Get uuid from log
+      set_fact:
+        validation_run_uuids: "{{ result.stdout | from_json | json_query(uuid_selector) }}"
+      vars:
+        uuid_selector: 'results[*].UUID'
+
+- name: Show Validation run results
+  shell:
+    cmd: "{{ validation_command }} history get {{ run_uuid }} --full > {{ val_working_dir }}/show_run.log 2>&1"
+    executable: /bin/bash
+  loop: "{{ validation_run_uuids }}"
+  loop_control:
+    loop_var: run_uuid

@@ -35,7 +35,7 @@
 - name: Find validations data
   find:
     paths: "{{ output_dir }}"
-    patterns: "*.json,*.log"
+    patterns: "*.json,*.log,*.yaml"
   register: validation_json
 
 - name: Collect Validation logs
