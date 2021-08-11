@@ -43,16 +43,20 @@
     validation_dir: "--validation-dir /usr/share/ansible/validation-playbooks"
   when: not is_virtualenv.stat.exists
 
-- include: run.yaml name="{{ item }}"
+- include_tasks: run.yaml
+  vars:
+    name: "{{ item }}"
   when:
     - run_validation|default(false)|bool
     - validation_component | length > 0
   with_dict: "{{ validations_list[validation_component] }}"
 
-- include: list.yaml
-
-- include: show.yaml name="{{ item }}"
+- include_tasks: show.yaml
+  vars:
+    name: "{{ item }}"
   when:
     - run_validation|default(false)|bool
     - validation_component | length > 0
   with_dict: "{{ validations_list[validation_component] }}"
+
+- include_tasks: list.yaml
