@@ -56,26 +56,18 @@ class TestValidationsReadIni(base.TestCase):
     def test_check_file_invalid_path(self):
         '''Test validations_read_ini when path is invalid'''
 
-        msg = validation.check_file('non/existing/path', False)
-        self.assertEqual("Could not open the ini file: 'non/existing/path'",
-                         msg)
-
-    def test_check_file_ignore_missing(self):
-        '''Test validations_read_ini when ignoring missing files'''
-
-        msg = validation.check_file('non/existing/path', True)
-        self.assertEqual("Could not open the ini file: 'non/existing/path'",
-                         msg)
+        ret_val = validation.check_file('non/existing/path')
+        self.assertEqual(False, ret_val)
 
     def test_check_file_valid_path(self):
         '''Test validations_read_ini when path is valid'''
 
-        tmpfile = self.create_tmp_ini()
-        tmp_name = os.path.relpath(tmpfile.name)
-        msg = validation.check_file(tmp_name, False)
+        with self.create_tmp_ini() as tmpfile:
+            tmp_name = os.path.relpath(tmpfile.name)
+            ret_val = validation.check_file(tmp_name)
         tmpfile.close()
 
-        self.assertEqual('', msg)
+        self.assertEqual(True, ret_val)
 
     def test_get_result_invalid_format(self):
         '''Test validations_read_ini when file format is valid'''

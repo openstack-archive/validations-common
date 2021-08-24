@@ -90,17 +90,33 @@ class ReturnValue(Enum):
     KEY_NOT_FOUND = 2
 
 
-def check_file(path, ignore_missing):
-    '''Validate entered path'''
+def check_file(path):
+    """Check if the requested file exists.
+    :param path: path to configuration file
+    :dtype path: `string`
 
-    if not (os.path.exists(path) and os.path.isfile(path)):
-        return "Could not open the ini file: '{}'".format(path)
-    else:
-        return ''
+    :returns: True if file exists, false otherwise
+    :rtype: `bool`
+    """
+
+    return (os.path.exists(path) and os.path.isfile(path))
 
 
 def get_result(path, section, key, default=None):
-    '''Get value based on section and key'''
+    """Get value based on a section and a key.
+
+    :param path: path to configuration file
+    :dtype path: `string`
+    :param section: name of the config file section
+    :dtype section: `string`
+    :param key: key for which we want to know the value
+    :dtype key: `string`
+    :param default: default value to use if the key does not exist
+    :dtype default: `object`
+
+    :returns: tuple of numeric return code, message and value of the requested key
+    :rtype: `tuple`
+    """
 
     msg = ''
     value = None
@@ -110,17 +126,14 @@ def get_result(path, section, key, default=None):
         config.read(path)
     except (OSError, ConfigParser.ParsingError) as exc_msg:
         msg = "The file '{}' is not in a valid INI format: {}".format(
-            path, exc_msg
-        )
-        ret = ReturnValue.INVALID_FORMAT
-        return (ret, msg, value)
+            path, exc_msg)
+        return (ReturnValue.INVALID_FORMAT, msg, value)
 
     try:
         value = config.get(section, key)
         msg = ("The key '{}' under the section '{}' in file {} "
                "has the value: '{}'").format(key, section, path, value)
         ret = ReturnValue.OK
-        return (ret, msg, value)
     except ConfigParser.Error:
         if default:
             msg = ("There is no key '{}' under section '{}' in file {}. Using"
@@ -132,27 +145,20 @@ def get_result(path, section, key, default=None):
             msg = "There is no key '{}' under the section '{}' in file {}.".format(
                   key, section, path)
             ret = ReturnValue.KEY_NOT_FOUND
-        return (ret, msg, value)
+    return (ret, msg, value)
 
 
 def main():
     module = AnsibleModule(
-        argument_spec=yaml_safe_load(DOCUMENTATION)['options']
-    )
+        argument_spec=yaml_safe_load(DOCUMENTATION)['options'])
 
     ini_file_path = module.params.get('path')
     ignore_missing = module.params.get('ignore_missing_file')
 
     # Check that file exists
-    msg = check_file(ini_file_path, ignore_missing)
+    file_exists = check_file(ini_file_path)
 
-    if msg != '':
-        # Opening file failed
-        if ignore_missing:
-            module.exit_json(msg=msg, changed=False, value=None)
-        else:
-            module.fail_json(msg=msg)
-    else:
+    if file_exists:
         # Try to parse the result from ini file
         section = module.params.get('section')
         key = module.params.get('key')
@@ -166,7 +172,13 @@ def main():
             module.exit_json(msg=msg, changed=False, value=None)
         elif ret == ReturnValue.OK:
             module.exit_json(msg=msg, changed=False, value=value)
-
+    else:
+        # Opening file failed
+        msg = "Could not open the ini file: '{}'".format(ini_file_path)
+        if ignore_missing:
+            module.exit_json(msg=msg, changed=False, value=None)
+        else:
+            module.fail_json(msg=msg)
 
 if __name__ == '__main__':
     main()
