@@ -42,7 +42,7 @@
         - skip_ansible_lint
 
     - name: Format the partition with XFS with ftype=1
-      filesystem:
+      community.general.filesystem:
         fstype: xfs
         dev: "{{ losetup.stdout }}"
         opts: -n ftype=1
@@ -53,7 +53,7 @@
         state: directory
 
     - name: Mount the XFS partition
-      mount:
+      ansible.posix.mount:
         path: /xfs
         src: "{{ losetup.stdout }}p1"
         fstype: xfs
