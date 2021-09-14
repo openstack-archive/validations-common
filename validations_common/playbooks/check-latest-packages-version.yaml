@@ -9,5 +9,11 @@
         before starting an upgrade.
       groups:
         - pre-upgrade
+      categories:
+        - packages
+        - rpm
+        - upgrade
+      products:
+        - common
   roles:
     - check_latest_packages_version

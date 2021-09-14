@@ -9,5 +9,11 @@
         with ftype=0 in any deployed node.
       groups:
         - pre-upgrade
+      categories:
+        - storage
+        - xfs
+        - disk
+      products:
+        - common
   roles:
     - xfs_check_ftype

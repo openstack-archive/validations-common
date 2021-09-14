@@ -9,5 +9,11 @@
         the validations framework works.
       groups:
         - no-op
+      categories:
+        - noop
+        - dummy
+        - test
+      products:
+        - common
   roles:
     - no_op

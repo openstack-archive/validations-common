@@ -12,6 +12,12 @@
         - post-deployment
         - pre-upgrade
         - post-upgrade
+      categories:
+        - security
+        - selinux
+        - audit
+      products:
+        - common
     validate_selinux_working_dir: /tmp
     validate_selinux_audit_source: /var/log/audit/audit.log
     validate_selinux_skip_list_dest: "{{ validate_selinux_working_dir }}/denials-skip-list.txt"

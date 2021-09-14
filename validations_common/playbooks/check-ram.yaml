@@ -10,6 +10,13 @@
         - prep
         - pre-introspection
         - pre-upgrade
+      categories:
+        - system
+        - ram
+        - memory
+        - os
+      products:
+        - common
     minimal_ram_gb: 24
   roles:
     - check_ram

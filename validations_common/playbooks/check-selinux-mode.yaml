@@ -9,5 +9,10 @@
       groups:
         - prep
         - pre-introspection
+      categories:
+        - security
+        - selinux
+      products:
+        - common
   roles:
     - check_selinux_mode

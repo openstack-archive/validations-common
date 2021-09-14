@@ -11,5 +11,11 @@
         that it is indeed running and connected to an NTP server on all nodes.
       groups:
         - post-deployment
+      categories:
+        - networking
+        - time
+        - os
+      products:
+        - common
   roles:
     - ntp

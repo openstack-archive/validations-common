@@ -10,6 +10,13 @@
         - prep
         - backup-and-restore
         - pre-introspection
+      categories:
+        - system
+        - cpu
+        - core
+        - os
+      products:
+        - common
     minimal_cpu_count: 8
   roles:
     - check_cpu
