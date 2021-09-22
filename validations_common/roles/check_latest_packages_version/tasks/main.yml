@@ -6,6 +6,7 @@
       - '!min'
 
 - name: Get available updates for packages
+  become: true
   check_package_update:
     packages_list: "{{ packages_list }}"
   register: updates
