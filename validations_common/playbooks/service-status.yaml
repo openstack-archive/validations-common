@@ -14,5 +14,12 @@
         - pre-upgrade
         - post-deployment
         - post-upgrade
+      categories:
+        - systemd
+        - container
+        - docker
+        - podman
+      products:
+        - common
   roles:
     - service_status

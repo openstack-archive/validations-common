@@ -9,5 +9,11 @@
       groups:
         - prep
         - pre-deployment
+      categories:
+        - storage
+        - disk
+        - system
+      products:
+        - common
   roles:
     - advanced_format_512e_support

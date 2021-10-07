@@ -10,6 +10,12 @@
       groups:
         - prep
         - pre-introspection
+      categories:
+        - system
+        - disk
+        - upgrade
+      products:
+        - common
     volumes:
       - {mount: /var/lib/docker, min_size: 10}
       - {mount: /var/lib/config-data, min_size: 3}

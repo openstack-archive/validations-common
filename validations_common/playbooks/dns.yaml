@@ -8,6 +8,11 @@
         Verify that the DNS resolution works
       groups:
         - pre-deployment
+      categories:
+        - networking
+        - dns
+      products:
+        - common
     server_to_lookup: example.com
   roles:
     - dns
