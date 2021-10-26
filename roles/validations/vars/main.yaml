@@ -32,6 +32,26 @@ validations_list:
         extra_args: ""
         extra_env_args: "{{ extra_env_vars | default('') }}"
     - check-for-dangling-images:
+  baremetal:
+    - collect-flavors-and-verify-profiles:
+        extra_args: ""
+        extra_env_args: "{{ extra_env_vars | default('') }}"
+    - default-node-count:
+        extra_args: ""
+        extra_env_args: "{{ extra_env_vars | default('') }}"
+    - dhcp-introspection:
+        extra_args: ""
+        extra_env_args: "{{ extra_env_vars | default('') }}"
+    - dhcp-provisioning:
+        extra_args: ""
+        extra_env_args: "{{ extra_env_vars | default('') }}"
+    - ironic-boot-configuration:
+        extra_args: ""
+        extra_env_args: "{{ extra_env_vars | default('') }}"
+    - node-disks:
+        extra_args: ""
+        extra_env_args: "{{ extra_env_vars | default('') }}"
+    - node-health:
         extra_args: ""
         extra_env_args: "{{ extra_env_vars | default('') }}"
 validations_group:
