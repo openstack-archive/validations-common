@@ -28,6 +28,12 @@ validations_list:
     - undercloud-process-count:
         extra_args: ""
         extra_env_args: "{{ extra_env_vars | default('') }}"
+    - tripleo-latest-packages-version:
+        extra_args: ""
+        extra_env_args: "{{ extra_env_vars | default('') }}"
+    - check-for-dangling-images:
+        extra_args: ""
+        extra_env_args: "{{ extra_env_vars | default('') }}"
 validations_group:
   compute:
     - compute
