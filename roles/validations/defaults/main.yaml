@@ -16,3 +16,4 @@ validation_component: "{{ job.component|default('validation') }}"
 # calls.
 cli_command: "validation"
 run_validation: true
+execute_full_vf_catalogue: "{{ job.execute_full_vf_catalogue|default(false)|bool }}"

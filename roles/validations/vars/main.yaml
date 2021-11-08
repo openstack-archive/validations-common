@@ -56,3 +56,92 @@ validation_list_formats:
   - table
   - value
   - yaml
+
+# Entire catalogue of validations to be executed in OVB environment
+# extra_env_args and extra_args are shared for the execution
+# Included validations will be sorted alphabetically.
+validation_catalogue:
+  extra_args: "--extra-vars minimal_ram_gb=2"
+  extra_env_args: "{{ extra_env_vars | default('') }}"
+  full_list:
+    - 512e
+    - ceph-dependencies-installed
+    - check-cpu
+    - check-disk-space
+    - check-disk-space-pre-upgrade
+    - check-for-dangling-images
+    - check-ftype
+    - check-network-gateway
+    - check-ram
+    - check-selinux-mode
+    - container-status
+    - controller-token
+    - controller-ulimits
+    - ctlplane-ip-range
+    - dhcp-introspection
+    - dhcp-provisioning
+    - dns
+    - healthcheck-service-status
+    - image-serve
+    - mysql-open-files-limit
+    - neutron-sanity-check
+    - no-op
+    - nova-event-callback
+    - nova-svirt
+    - ntp
+    - openshift-nw-requirements
+    - openstack-endpoints
+    - overcloud-service-status
+    - rabbitmq-limits
+    - repos
+    - service-status
+    - tripleo-latest-packages-version
+    - undercloud-disk-space
+    - undercloud-disk-space-pre-upgrade
+    - undercloud-neutron-sanity-check
+    - undercloud-process-count
+
+# Following validations are disabled for purposes of catalogue testing
+
+#    - ceilometerdb-size # Not present on the OVB deployment
+#    - system_encoding # Not present on the OVB deployment
+#    - ceph-ansible-installed # Not present on the OVB deployment
+#    - haproxy # Not present on the OVB deployment
+#    - no-op-firewall-nova-driver # Not present on the OVB deployment
+#    - containerized-undercloud-docker # Not present on the OVB deployment
+
+# Hostname prerequisites are not met
+
+#    - ceph-health
+#    - ovs-dpdk-pmd-cpus-check
+
+# General validation superceded by 'tripleo-latest-packages-version'
+#    - check-latest-packages-version
+
+# Failing due to bugs
+#    - ceph-pg
+#    - check-uc-hostname
+#    - collect-flavors-and-verify-profiles
+#    - default-node-count
+#    - ironic-boot-configuration
+#    - network-environment
+#    - node-health
+#    - nova-status
+#    - stack-health
+#    - switch-vlans
+#    - undercloud-heat-purge-deleted
+#    - undercloud-tokenflush
+#    - validate-selinux
+
+# Real issues detedte by validations but not relevant
+#    - check-rhsm-version
+#    - check-undercloud-conf
+#    - node-disks
+#    - openshift-hw-requirements
+#    - pacemaker-status
+#    - stonith-exists
+#    - tls-everywhere-post-deployment
+#    - tls-everywhere-pre-deployment
+#    - tls-everywhere-prep
+#    - undercloud-debug
+#    - undercloud-service-status

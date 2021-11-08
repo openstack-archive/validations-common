@@ -1,0 +1,15 @@
+---
+# Execute entire Validations Framework catalogue as provided
+# by the validations-common and tripleo-validations packages.
+# This task is intended to be used only by the RDO CI component pipeline.
+# Executing it anywhere else might lead to unforseen consequences.
+- name: Run validations catalogue
+  shell:
+    cmd: >-
+      {{ validation_command }} run --validation {{ validation_catalogue.full_list | join(",") }}
+      {{ validation_dir }} {{ ansible_dir }}
+      --inventory {{ inventory }}
+      --output-log validation_catalogue_execution.log
+      {{ validation_catalogue.extra_args }}
+      {{ validation_catalogue.extra_env_args }}
+    executable: /bin/bash
