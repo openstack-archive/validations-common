@@ -6,6 +6,10 @@ validations_list:
     - nova-status:
         extra_args: ""
         extra_env_args: "{{ extra_env_vars | default('') }}"
+  clients:
+    - openstack-endpoints:
+        extra_args: ""
+        extra_env_args: "{{ extra_env_vars | default('') }}"
   network:
     - undercloud-neutron-sanity-check:
         extra_args: ""
