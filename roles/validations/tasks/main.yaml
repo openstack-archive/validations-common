@@ -43,14 +43,36 @@
     validation_dir: "--validation-dir /usr/share/ansible/validation-playbooks"
   when: not is_virtualenv.stat.exists
 
-- name: Run validations
+- name: Run positive validation tests
   include_tasks: run.yaml
   vars:
     name: "{{ item }}"
+    expected_rc: 0
   when:
     - run_validation|default(false)|bool
     - validation_component | length > 0
   with_dict: "{{ validations_list[validation_component] }}"
+
+- name: Fail if something went wrong
+  fail:
+    msg: "One or more Validations has failed, check the log results for more information."
+  when: result_failed | default(False) | bool
+
+- name: Run negative validation tests
+  include_tasks: run.yaml
+  vars:
+    name: "{{ item }}"
+    expected_rc: 1
+    negative: true
+  when:
+    - run_validation|default(false)|bool
+    - validation_component | length > 0
+  with_dict: "{{ validations_list[validation_component] }}"
+
+- name: Fail if something went wrong
+  fail:
+    msg: "One or more Validations has failed, check the log results for more information."
+  when: result_failed | default(False) | bool
 
 - name: List validations
   include_tasks: list.yaml

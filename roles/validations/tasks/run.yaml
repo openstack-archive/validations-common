@@ -1,77 +1,29 @@
 ---
-- name: Run validations - positive - these are supposed to pass
-  shell:
-    cmd: >-
-      {{ validation_command }} run --validation {{ name.key }}
-      {{ validation_dir }} {{ ansible_dir }}
-      --inventory {{ inventory }}
-      --output-log validation_{{ name.key }}_positive.log
-      {{ name.value.extra_args }}
-      {{ name.value.extra_env_args }}
-    executable: /bin/bash
-
-- name: Get Run results - positive - these are supposed to pass
+- name: Run validations
   block:
-    - name: Get run results
-      register: result
+    - name: Set fact for extra args.
+      set_fact:
+        execution_extra_args: "{{ name.value.negative_results.extra_args }}"
+      when:
+        - "'negative_results' in name.value "
+        - negative | default(False) | bool
+
+    - name: Execute Validations {{ name.key }}
+      ignore_errors: true
+      register: run_results
       shell:
-        cmd: "cat validation_{{ name.key }}_positive.log"
+        cmd: >-
+          {{ validation_command }} run --validation {{ name.key }}
+          {{ validation_dir }} {{ ansible_dir }}
+          --inventory {{ inventory }}
+          --output-log validation_{{ name.key }}_positive.log
+          {{ execution_extra_args | default(name.value.extra_args) }}
+          {{ name.value.extra_env_args }}
         executable: /bin/bash
+      when: (negative | default(False) | bool and 'negative_results' in name.value) or
+            (not negative | default(False) | bool)
 
-    - name: Get json data
-      set_fact:
-        jsondata: "{{ result.stdout | from_json }}"
-
-    - name: Get Validations Status
-      set_fact:
-        status: "{{ jsondata | json_query(jsonres) }}"
-      vars:
-        jsonres: 'results[*].Status'
-
-    - fail:
-        msg: "Validation failed with {{ validation_status }}: some of the validations have failed. {{ status }}"
-      when: validation_status != "PASSED"
-      loop: "{{ status }}"
-      loop_control:
-        loop_var: validation_status
-
-- name: Run validations - negative - these are not supposed to pass
-  shell:
-    cmd: >-
-      {{ validation_command }} run --validation {{ name.key }}
-      {{ validation_dir }} {{ ansible_dir }}
-      --inventory {{ inventory }}
-      --output-log validation_{{ name.key }}_negative.log
-      {{ name.value.negative_results.extra_args }}
-      {{ name.value.extra_env_args }}
-    executable: /bin/bash
-  when: "'negative_results' in name.value "
-  ignore_errors: true
-
-- name: Get Run results - negative - these are not supposed to pass
-  # This task should fail with return code != 0
-  # The validation is supplied with parameters that make it impossible to pass.
-  block:
-    - name: Get run results
-      register: result
-      shell:
-        cmd: "cat validation_{{ name.key }}_negative.log"
-        executable: /bin/bash
-
-    - name: Get json data
-      set_fact:
-        jsondata: "{{ result.stdout | from_json }}"
-
-    - name: Get Validations Status
-      set_fact:
-        status: "{{ jsondata | json_query(jsonres) }}"
-      vars:
-        jsonres: 'results[*].Status'
-
-    - fail:
-        msg: "Validation passed with {{ validation_status }} when it shouldn't have: some of the validations have passed. {{ status }}"
-      when: validation_status == "PASSED"
-      loop: "{{ status }}"
-      loop_control:
-        loop_var: validation_status
-  when: "'negative_results' in name.value"
+    - name: set fact for run_results
+      ignore_errors: true
+      set_fact: result_failed=true
+      when: run_results.rc != expected_rc
