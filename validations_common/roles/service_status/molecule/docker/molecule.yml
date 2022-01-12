@@ -6,11 +6,11 @@ driver:
   name: docker
 
 platforms:
-  - name: ubi8
-    hostname: ubi8
-    image: ubi8/ubi-init
+  - name: centos8
+    hostname: centos8
+    image: centos/centos:stream8
     registry:
-      url: registry.access.redhat.com
+      url: quay.io
     dockerfile: ../../../../../.config/molecule/Dockerfile
     pkg_extras: python*-setuptools python*-pyyaml python*-libselinux
     command: /sbin/init
