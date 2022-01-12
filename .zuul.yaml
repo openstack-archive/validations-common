@@ -19,7 +19,7 @@
 
 - job:
     name: validations-common-reqcheck
-    nodeset: centos-8
+    nodeset: centos-8-stream
     parent: base
     run: playbooks/reqcheck.yaml
     timeout: 1600
@@ -30,7 +30,7 @@
       - ^requirements.txt$
 - job:
     name: validations-common-coverchange
-    nodeset: centos-8
+    nodeset: centos-8-stream
     parent: base
     run: playbooks/coverchange.yaml
     timeout: 1600
@@ -43,7 +43,7 @@
 - job:
     description: Base validations-common job
     name: validations-common-centos-8-base
-    nodeset: centos-8
+    nodeset: centos-8-stream
     parent: base
     success-url: "reports.html"
     failure-url: "reports.html"
