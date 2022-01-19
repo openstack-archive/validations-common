@@ -104,3 +104,11 @@ This repository has a simple HTTP server for testing purpose under::
 
 The default host and port are localhost and 8989, feel free to adjust those
 values to your needs.
+
+Running the molecule tests
+==========================
+
+In order to run the molecule tests locally on your local machine, please follow
+the instructions documented in the `Tripleo Validations` `Developers Guide`_.
+
+.. _Developers Guide: https://docs.openstack.org/tripleo-validations/latest/contributing/developer_guide.html#local-testing-of-new-roles
