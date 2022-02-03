@@ -65,7 +65,7 @@ validation_list_formats:
 # extra_env_args and extra_args are shared for the execution
 # Included validations will be sorted alphabetically.
 validation_catalogue:
-  extra_args: "--extra-vars minimal_ram_gb=2"
+  extra_args: ""
   extra_env_args: "{{ extra_env_vars | default('') }}"
   full_list:
     - 512e
@@ -86,7 +86,6 @@ validation_catalogue:
     - dhcp-provisioning
     - dns
     - healthcheck-service-status
-    - image-serve
     - mysql-open-files-limit
     - neutron-sanity-check
     - no-op
@@ -149,3 +148,5 @@ validation_catalogue:
 #    - tls-everywhere-prep
 #    - undercloud-debug
 #    - undercloud-service-status
+# LP#1959864
+#    - image-serve

@@ -1,0 +1,11 @@
+---
+# LP#1959864
+volumes:
+  - {mount: /var/lib/docker, min_size: 10}
+  - {mount: /var/lib/config-data, min_size: 3}
+  - {mount: /var/log, min_size: 3}
+  - {mount: /usr, min_size: 5}
+  - {mount: /var, min_size: 8}
+  - {mount: /, min_size: 8}
+
+minimal_ram_gb: 2
