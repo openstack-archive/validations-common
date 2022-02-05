@@ -12,4 +12,5 @@
       --output-log validation_catalogue_execution.log
       {{ validation_catalogue.extra_args }}
       {{ validation_catalogue.extra_env_args }}
+      --extra-vars-file={{ vf_catalogue_overrides }}
     executable: /bin/bash

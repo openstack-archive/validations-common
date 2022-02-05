@@ -115,6 +115,15 @@
     - validation_component | length > 0
   with_dict: "{{ validations_list[validation_component] }}"
 
+- name: Import variable overrides
+  become: true
+  copy:
+    src: files/catalog_vars_override.yaml
+    dest: "{{ vf_catalogue_overrides }}"
+    mode: "0644"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
 - name: Execute entire validations catalogue
   include_tasks: execute_full_catalogue.yaml
   when: execute_full_vf_catalogue
