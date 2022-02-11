@@ -118,6 +118,7 @@
         - validations-common-centos-8-molecule-check_selinux_mode
         - validations-common-centos-8-molecule-validate_selinux
         - validations-common-centos-8-molecule-xfs_check_ftype
+        - validations-common-centos-8-molecule-check_rsyslog
     gate:
       jobs:
         - validations-common-centos-8-molecule-check_latest_packages_version
@@ -253,3 +254,14 @@
     parent: validations-common-centos-8-base
     vars:
       validations_common_role_name: validate_selinux
+- job:
+    files:
+      - ^validations_common/roles/check_rsyslog/.*
+      - ^tests/prepare-test-host.yml
+      - ^playbooks/molecule/pre.yml
+      - ^playbooks/molecule/run.yml
+      - ^molecule-requirements.txt
+    name: validations-common-centos-8-molecule-check_rsyslog
+    parent: validations-common-centos-8-base
+    vars:
+      validations_common_role_name: check_rsyslog

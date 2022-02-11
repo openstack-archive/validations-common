@@ -1,0 +1,28 @@
+---
+- hosts: all
+  gather_facts: false
+  vars:
+    metadata:
+      name: Ensure presence of rsyslog package and running daemon.
+      description: >
+        Detects package presence and running service on the target host
+        and fails if it doesn't find it. Presence of running logging service
+        is one of the recommended requirements in NIST SP 800-171
+        https://csrc.nist.gov/publications/detail/sp/800-171/rev-2/final
+        as well as other standards.
+      groups:
+        - prep
+        - pre-deployment
+        - pre-upgrade
+        - post-deployment
+        - post-upgrade
+      categories:
+        - system
+        - core
+        - os
+        - audit
+        - security
+      products:
+        - common
+  roles:
+    - check_rsyslog
