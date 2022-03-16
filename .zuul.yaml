@@ -19,7 +19,7 @@
 
 - job:
     name: validations-common-reqcheck
-    nodeset: centos-8-stream
+    nodeset: centos-9-stream
     parent: base
     run: playbooks/reqcheck.yaml
     timeout: 1600
@@ -30,7 +30,7 @@
       - ^requirements.txt$
 - job:
     name: validations-common-coverchange
-    nodeset: centos-8-stream
+    nodeset: centos-9-stream
     parent: base
     run: playbooks/coverchange.yaml
     timeout: 1600
@@ -56,8 +56,8 @@
     voting: true
 
 - job:
-    name: tripleo-ci-centos-8-standalone-validation-common
-    parent: tripleo-ci-centos-8-standalone
+    name: tripleo-ci-centos-9-standalone-validation-common
+    parent: tripleo-ci-centos-9-standalone
     vars:
       featureset: '052'
       validate_services: true
@@ -77,7 +77,7 @@
         - openstack-tox-py36
         - openstack-tox-py39
         - validations-common-functional
-        - tripleo-ci-centos-8-standalone-validation-common:
+        - tripleo-ci-centos-9-standalone-validation-common:
             vars: &consumer_vars
               build_container_images: true
             dependencies:
@@ -95,7 +95,7 @@
         - openstack-tox-py36
         - openstack-tox-py39
         - validations-common-functional
-        - tripleo-ci-centos-8-standalone-validation-common:
+        - tripleo-ci-centos-9-standalone-validation-common:
             vars: *consumer_vars
             dependencies:
               - openstack-tox-linters

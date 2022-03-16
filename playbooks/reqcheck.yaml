@@ -10,8 +10,7 @@
         cmd: |
           set -e
           # Need to inherit system-site-packages for python-yum
-          sudo dnf install -y python3-virtualenv
-          virtualenv --system-site-packages {{ ansible_user_dir }}/.venv
+          python3 -m venv --system-site-packages {{ ansible_user_dir }}/.venv
           source {{ ansible_user_dir }}/.venv/bin/activate
           git clone https://github.com/softwarefactory-project/rdopkg.git
           cd rdopkg
