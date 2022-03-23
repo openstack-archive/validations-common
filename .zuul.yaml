@@ -75,7 +75,6 @@
     check:
       jobs:
         - validations-common-reqcheck
-        - validations-common-coverchange
         - openstack-tox-linters
         - openstack-tox-cover
         - openstack-tox-py36
