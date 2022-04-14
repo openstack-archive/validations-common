@@ -43,6 +43,26 @@
     validation_dir: "--validation-dir /usr/share/ansible/validation-playbooks"
   when: not is_virtualenv.stat.exists
 
+- name: Set a valid inventory
+  block:
+    - name: Stat all possible inventory location
+      register: stat_results
+      stat:
+        path: '{{ item }}'
+      loop: '{{ inventory_list }}'
+
+    - name: Set inventory path or fallback to default localhost
+      set_fact:
+        inventory_path: '{{ item.item if not inventory_path|default(false) else inventory_path|default("localhost") }}'
+      when:
+        - '{{ item.stat.exists }}'
+      loop: '{{ stat_results.results }}'
+
+    - name: Set inventory variable
+      set_fact:
+        inventory: '{{ inventory_path }}'
+  when: inventory == ""
+
 - name: Run positive validation tests
   include_tasks: run.yaml
   vars:
