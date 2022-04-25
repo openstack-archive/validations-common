@@ -81,6 +81,7 @@
         mode: 0600
 
     - name: Filter out denials
+      become: true
       when: validate_selinux_skip_list != {}
       ignore_errors: true
       changed_when: false
@@ -90,6 +91,7 @@
         chmod 0600 {{ validate_selinux_filtered_denials_dest }}
 
     - name: No skip_list
+      become: true
       when: validate_selinux_skip_list == {}
       copy:
         remote_src: true
