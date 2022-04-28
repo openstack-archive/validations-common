@@ -8,6 +8,10 @@
     required-projects:
       - openstack/validations-libs
       - openstack/validations-common
+      - name: openstack/openstacksdk
+        override-checkout: master
+      - name: opendev.org/openstack/devstack
+        override-checkout: master
     vars:
       devstack_localrc:
         USE_PYTHON3: true
