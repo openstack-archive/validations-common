@@ -5,7 +5,7 @@ zuul_work_virtualenv: "{{ user_dir }}/.venv"
 vf_log_dir: "{{ ansible_user_dir }}/logs"
 ansible_dir: ""
 
-inventory: "localhost"
+inventory: ""
 inventory_list:
   - '{{ user_dir }}/tripleo-deploy/overcloud/tripleo-ansible-inventory.yaml'
   - '{{ user_dir }}/tripleo-deploy/undercloud/tripleo-ansible-inventory.yaml'

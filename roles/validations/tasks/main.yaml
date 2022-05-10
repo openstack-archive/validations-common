@@ -48,19 +48,23 @@
     - name: Stat all possible inventory location
       register: stat_results
       stat:
-        path: '{{ item }}'
+        path: '{{ inv_path }}'
       loop: '{{ inventory_list }}'
+      loop_control:
+        loop_var: inv_path
 
     - name: Set inventory path or fallback to default localhost
       set_fact:
-        inventory_path: '{{ item.item if not inventory_path|default(false) else inventory_path|default("localhost") }}'
+        inventory_path: '{{ stat_result.inv_path }}'
       when:
-        - '{{ item.stat.exists }}'
+        - '{{ stat_result.stat.exists }}'
       loop: '{{ stat_results.results }}'
+      loop_control:
+        loop_var: stat_result
 
     - name: Set inventory variable
       set_fact:
-        inventory: '{{ inventory_path }}'
+        inventory: '{{ inventory_path|default("localhost") }}'
   when: inventory == ""
 
 - name: Run positive validation tests
