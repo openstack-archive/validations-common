@@ -22,12 +22,28 @@
       - ^releasenotes/.*$
 
 - job:
+    name: validations-common-functional-stable
+    parent: validations-common-functional
+    branches: stable/1.6
+    override-checkout: stable/train
+    required-projects:
+      - name: openstack/requirements
+        override-checkout: stable/train
+      - openstack/validations-libs
+      - openstack/validations-common
+      - name: openstack/openstacksdk
+        override-checkout: stable/train
+      - name: opendev.org/openstack/devstack
+        override-checkout: stable/train
+
+- job:
     name: validations-common-reqcheck
     nodeset: centos-8-stream
     parent: base
     run: playbooks/reqcheck.yaml
     timeout: 1600
     voting: true
+    override-checkout: stable/train
     required-projects:
       - openstack/validations-common
     files:
@@ -49,13 +65,46 @@
     voting: true
 
 - job:
+    name: validations-common-centos-8-base-stable
+    nodeset: centos-8-stream
+    parent: validations-common-centos-8-base
+    description: |
+      Base job for validations-common molecule tests, adjusted to work
+      with stable/1.6 branch of the openstack/validations-common repository and
+      stable/train branches of other Openstack projects.
+      This job should not be used for any other purpose.
+    branches: stable/1.6
+    override-checkout: stable/train
+    vars:
+      branch_override: stable/train
+
+- job:
     name: tripleo-ci-centos-8-standalone-validation-common
-    parent: tripleo-ci-centos-8-standalone
+    parent: tripleo-ci-base-standalone-centos-8
     vars:
       featureset: '052'
       validate_services: true
       enable_validation: true
       validation_component: validation
+      build_container_images: true
+
+- job:
+    name: tripleo-ci-centos-8-standalone-validation-common-stable
+    parent: tripleo-ci-centos-8-standalone-validation-common
+    description: |
+      Standalone job created and intended solely for the stable/1.6
+      branch of the openstack/validations-common project.
+      Checks out stable/train branches of relevant openstack repos in order
+      to test mutual compatibility of validations-common-1.6.* and Train release
+      of Openstack project. This job should not be used for any other purpose.
+    final: true
+    branches: stable/1.6
+    override-checkout: stable/train
+    required-projects:
+      name: openstack/tripleo-ci
+      override-checkout: master
+    vars:
+      branch_override: stable/train
 
 - project:
     templates:
@@ -64,18 +113,17 @@
     check:
       jobs:
         - validations-common-reqcheck
-        - openstack-tox-linters
-        - openstack-tox-cover
-        - openstack-tox-py36
-        - openstack-tox-py39
-        - validations-common-functional
-        - tripleo-ci-centos-8-standalone-validation-common:
-            vars: &consumer_vars
-              build_container_images: true
+        - openstack-tox-linters: &tox_override_checkout
+            override-checkout: stable/train
+        - openstack-tox-cover: *tox_override_checkout
+        - openstack-tox-py36: *tox_override_checkout
+        - openstack-tox-py37: *tox_override_checkout
+        - validations-common-functional-stable
+        - tripleo-ci-centos-8-standalone-validation-common-stable:
             dependencies:
               - openstack-tox-linters
               - openstack-tox-cover
-              - validations-common-functional
+              - validations-common-functional-stable
         - openstack-tox-docs: &tripleo-docs
             files:
               - ^doc/.*
@@ -83,19 +131,19 @@
               - ^validations_common/.*
     gate:
       jobs:
-        - openstack-tox-linters
-        - openstack-tox-py36
-        - openstack-tox-py39
-        - validations-common-functional
-        - tripleo-ci-centos-8-standalone-validation-common:
-            vars: *consumer_vars
+        - openstack-tox-linters: *tox_override_checkout
+        - openstack-tox-py36: *tox_override_checkout
+        - openstack-tox-py37: *tox_override_checkout
+        - validations-common-functional-stable
+        - tripleo-ci-centos-8-standalone-validation-common-stable:
             dependencies:
               - openstack-tox-linters
-              - validations-common-functional
+              - validations-common-functional-stable
         - openstack-tox-docs: *tripleo-docs
     promote:
       jobs:
         - promote-openstack-tox-docs: *tripleo-docs
+
 - project-template:
     check:
       jobs:
@@ -120,6 +168,7 @@
         - validations-common-centos-8-molecule-check_ram
         - validations-common-centos-8-molecule-validate_selinux
     name: validations-common-molecule-jobs
+
 - job:
     files:
       - ^validations_common/roles/check_selinux_mode/.*
@@ -128,7 +177,7 @@
       - ^playbooks/molecule/run.yml
       - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-check_selinux_mode
-    parent: validations-common-centos-8-base
+    parent: validations-common-centos-8-base-stable
     vars:
       validations_common_role_name: check_selinux_mode
     voting: false
@@ -140,7 +189,7 @@
       - ^playbooks/molecule/run.yml
       - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-ntp
-    parent: validations-common-centos-8-base
+    parent: validations-common-centos-8-base-stable
     vars:
       validations_common_role_name: ntp
     voting: false
@@ -152,7 +201,7 @@
       - ^playbooks/molecule/run.yml
       - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-service_status
-    parent: validations-common-centos-8-base
+    parent: validations-common-centos-8-base-stable
     vars:
       validations_common_role_name: service_status
     voting: false
@@ -164,7 +213,7 @@
       - ^playbooks/molecule/run.yml
       - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-advanced_format_512e_support
-    parent: validations-common-centos-8-base
+    parent: validations-common-centos-8-base-stable
     vars:
       validations_common_role_name: advanced_format_512e_support
     voting: false
@@ -176,7 +225,7 @@
       - ^playbooks/molecule/run.yml
       - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-dns
-    parent: validations-common-centos-8-base
+    parent: validations-common-centos-8-base-stable
     vars:
       validations_common_role_name: dns
 - job:
@@ -187,7 +236,7 @@
       - ^playbooks/molecule/run.yml
       - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-check_cpu
-    parent: validations-common-centos-8-base
+    parent: validations-common-centos-8-base-stable
     vars:
       validations_common_role_name: check_cpu
 - job:
@@ -198,7 +247,7 @@
       - ^playbooks/molecule/run.yml
       - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-check_ram
-    parent: validations-common-centos-8-base
+    parent: validations-common-centos-8-base-stable
     vars:
       validations_common_role_name: check_ram
 - job:
@@ -209,7 +258,7 @@
       - ^playbooks/molecule/run.yml
       - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-check_disk_space
-    parent: validations-common-centos-8-base
+    parent: validations-common-centos-8-base-stable
     vars:
       validations_common_role_name: check_disk_space
 - job:
@@ -220,7 +269,7 @@
       - ^playbooks/molecule/run.yml
       - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-xfs_check_ftype
-    parent: validations-common-centos-8-base
+    parent: validations-common-centos-8-base-stable
     vars:
       validations_common_role_name: xfs_check_ftype
     voting: false
@@ -232,7 +281,7 @@
       - ^playbooks/molecule/run.yml
       - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-check_latest_packages_version
-    parent: validations-common-centos-8-base
+    parent: validations-common-centos-8-base-stable
     vars:
       validations_common_role_name: check_latest_packages_version
 - job:
@@ -243,7 +292,7 @@
       - ^playbooks/molecule/run.yml
       - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-validate_selinux
-    parent: validations-common-centos-8-base
+    parent: validations-common-centos-8-base-stable
     vars:
       validations_common_role_name: validate_selinux
 - job:
@@ -254,6 +303,6 @@
       - ^playbooks/molecule/run.yml
       - ^molecule-requirements.txt
     name: validations-common-centos-8-molecule-check_rsyslog
-    parent: validations-common-centos-8-base
+    parent: validations-common-centos-8-base-stable
     vars:
       validations_common_role_name: check_rsyslog
