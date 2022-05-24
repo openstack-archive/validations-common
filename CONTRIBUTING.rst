@@ -4,7 +4,20 @@ It covers all the basics that are common to all OpenStack projects: the accounts
 you need, the basics of interacting with our Gerrit review system, how we
 communicate as a community, etc.
 
-The information below will cover the project specific information you need to get started with TripleO.
+The information below will cover the project specific information you'll
+need to get started with validation-framework.
+
+Branches and version management
+===============================
+Validation Framework project uses semantic versioning and derives names of stable branches
+from the released minor versions. The latest minor version released is the only exception
+as it is derived from the `master` branch.
+
+Therefore, all code used by version 1.n.* of the project resides in `stable/1.n` branch,
+and when version 1.(n+1) is released, new branch `stable/1.(n+1)` will be created.
+
+By default, stable branches recieve only bug fixes and feature backports are decided on case basis
+after all the necessary discussions and procedures have taken place.
 
 Documentation
 =============
