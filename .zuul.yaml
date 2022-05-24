@@ -81,6 +81,7 @@
               - ^doc/.*
               - ^README.rst
               - ^validations_common/.*
+              - ^CONTRIBUTING.rst
     gate:
       jobs:
         - openstack-tox-linters
