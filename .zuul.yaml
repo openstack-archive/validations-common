@@ -66,7 +66,7 @@
         - validations-common-reqcheck
         - openstack-tox-linters
         - openstack-tox-cover
-        - openstack-tox-py36
+        - openstack-tox-py38
         - openstack-tox-py39
         - validations-common-functional
         - tripleo-ci-centos-9-standalone-validation-common:
@@ -84,7 +84,7 @@
     gate:
       jobs:
         - openstack-tox-linters
-        - openstack-tox-py36
+        - openstack-tox-py38
         - openstack-tox-py39
         - validations-common-functional
         - tripleo-ci-centos-9-standalone-validation-common:
