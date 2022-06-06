@@ -46,6 +46,8 @@ validations_list:
         extra_args: ""
         extra_env_args: "{{ extra_env_vars | default('') }}"
     - check-for-dangling-images:
+        extra_args: ""
+        extra_env_args: "{{ extra_env_vars | default('') }}"
   baremetal:
     - collect-flavors-and-verify-profiles:
         extra_args: ""
