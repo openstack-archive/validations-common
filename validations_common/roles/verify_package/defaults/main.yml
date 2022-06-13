@@ -1,0 +1,4 @@
+---
+# defaults file for verify_package
+verify_package_pkg: bash
+verify_package_verbose: false

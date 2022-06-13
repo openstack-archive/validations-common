@@ -1,0 +1,24 @@
+---
+- name: Ensure we have some facts
+  setup:
+    gather_subset: min
+
+- name: "Verify package {{ verify_package_pkg }}"
+  become: true
+  when:
+    - ansible_facts['os_family'] == 'RedHat'
+  register: pkg_verification
+  command: "rpm {{verify_package_verbose|ternary('-v','') }} -V {{ verify_package_pkg }}"
+  failed_when: pkg_verification['rc'] not in [0, 1]
+
+- name: Fail if needed
+  when:
+    - pkg_verification['rc'] != 0
+  fail:
+    msg: "{{ pkg_verification['stderr'] }}"
+
+- name: Fail if we are not on RedHat family system
+  when:
+    - ansible_facts['os_family'] != 'RedHat'
+  fail:
+    msg: "This validation does not support {{ ansible_facts['os_family'] }}!"
