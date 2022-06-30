@@ -35,7 +35,6 @@ from ansible.module_utils.basic import AnsibleModule
 from yaml import safe_load as yaml_safe_load
 
 
-
 DOCUMENTATION = '''
 ---
 module: validations_read_ini
