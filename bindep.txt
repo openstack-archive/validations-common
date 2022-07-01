@@ -46,3 +46,8 @@ librsvg2-tools      [doc platform:rpm]
 librsvg2-bin        [doc platform:dpkg]
 # PDF Docs package dependencies
 tex-gyre [platform:dpkg doc]
+
+# Linter requirements
+# libffi is required for linters on stable/1.6 branch
+libffi-dev [platform:dpkg]
+libffi-devel [platform:rpm]
