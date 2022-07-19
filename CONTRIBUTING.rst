@@ -1,8 +1,19 @@
-For general information on contributing to OpenStack, please check out the
-`contributor guide <https://docs.openstack.org/contributors/>`_ to get started.
-It covers all the basics that are common to all OpenStack projects: the accounts
-you need, the basics of interacting with our Gerrit review system, how we
-communicate as a community, etc.
+If you're interested in contributing to the validations-common project,
+the following will help get you started:
+
+   https://docs.openstack.org/infra/manual/developers.html
+
+If you already have a good understanding of how the system works and your
+OpenStack accounts are set up, you can skip to the development workflow
+section of this documentation to learn how changes to OpenStack should be
+submitted for review via the Gerrit tool:
+
+   https://docs.openstack.org/infra/manual/developers.html#development-workflow
+
+Pull requests submitted through GitHub will be ignored.
+
+Validations are meant to verify functionality of tripleo systems.
+Therefore a special care should be given to testing your code before submitting a review.
 
 The information below will cover the project specific information you'll
 need to get started with validation-framework.
@@ -21,7 +32,14 @@ after all the necessary discussions and procedures have taken place.
 
 Documentation
 =============
-Documentation for the TripleO project can be found `here <https://docs.openstack.org/tripleo-docs/latest/index.html>`_
+For description of provided validations, modules and tools please refer to the `upstream documentation <https://docs.openstack.org/validations-common/latest/>`_.
+Separate documentation is provided about the runtime, `validations-libs <https://docs.openstack.org/validations-libs/latest/>`_
+
+For general information on contributing to OpenStack, please check out the
+`contributor guide <https://docs.openstack.org/contributors/>`_ to get started.
+It covers all the basics that are common to all OpenStack projects: the accounts
+you need, the basics of interacting with our Gerrit review system, how we
+communicate as a community, etc.
 
 Communication
 =============

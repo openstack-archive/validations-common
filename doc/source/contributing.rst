@@ -1,5 +1,6 @@
-=========================
-So You Want To Contribute
-=========================
+==================================
+Contributing to validations-common
+==================================
+
 
 .. include:: ../../CONTRIBUTING.rst
