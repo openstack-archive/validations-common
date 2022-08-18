@@ -3,7 +3,7 @@
   block:
     - name: Set fact for extra args.
       set_fact:
-        execution_extra_args: "{{ name.value.negative_results.extra_args }}"
+        execution_extra_args: "{{ name.value.negative_results.extra_args | default('') }}"
       when:
         - "'negative_results' in name.value "
         - negative | default(False) | bool
