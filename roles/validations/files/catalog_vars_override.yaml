@@ -9,3 +9,6 @@ volumes:
   - {mount: /, min_size: 8}
 
 minimal_ram_gb: 2
+
+# LP#1987506
+minimal_cpu_count: 4
