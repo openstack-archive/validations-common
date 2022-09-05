@@ -45,7 +45,7 @@
         If selected package doesn't have the %verify scriptlet, it won't fail.
       groups:
         - prep
-        - pre-deploy
+        - pre-deployment
         - pre-ugrade
         - post-upgrade
         - pre-system-upgrade
