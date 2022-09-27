@@ -63,7 +63,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-copyright = u'2021, OpenStack Foundation'
+copyright = '2021, OpenStack Foundation'
 
 # A list of ignored prefixes for module index sorting.
 modindex_common_prefix = ['validations_common.']
@@ -104,8 +104,8 @@ latex_documents = [
     (
         'index',
         'doc-validations-common.tex',
-        u'Validations Framework Client Documentation',
-        u'OpenStack LLC',
+        'Validations Framework Client Documentation',
+        'OpenStack LLC',
         'manual'
     ),
 ]
