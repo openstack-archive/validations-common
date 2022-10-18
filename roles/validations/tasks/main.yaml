@@ -1,5 +1,11 @@
 ---
-- name: Make sure Validations Log dir exists
+- name: Remove validations log dir to ensure clean env
+  become: true
+  file:
+    path: "{{ vf_log_dir }}"
+    state: absent
+
+- name: Recreate validations Log dir exists
   become: true
   file:
     path: "{{ vf_log_dir }}"
