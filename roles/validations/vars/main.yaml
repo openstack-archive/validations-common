@@ -108,9 +108,11 @@ validation_catalogue:
     - check-for-dangling-images
     - check-ftype
     - check-network-gateway
+    - check-ntp-reachability
     - check-ram
     - check-rsyslog
     - check-selinux-mode
+    - compute-tsx
     - container-status
     - controller-token
     - controller-ulimits
@@ -118,6 +120,7 @@ validation_catalogue:
     - dhcp-introspection
     - dhcp-provisioning
     - dns
+    - fips-enabled
     - healthcheck-service-status
     - mysql-open-files-limit
     - neutron-sanity-check
@@ -132,15 +135,19 @@ validation_catalogue:
     - repos
     - service-status
     - tripleo-latest-packages-version
+    - undercloud-disabled-services
     - undercloud-disk-space
     - undercloud-disk-space-pre-upgrade
+    - undercloud-ipa-server-check
     - undercloud-neutron-sanity-check
     - undercloud-process-count
+    - undercloud-tokenflush
+    - validate-selinux
 
 # Following validations are disabled for purposes of catalogue testing
 
 #    - ceilometerdb-size # Not present on the OVB deployment
-#    - system_encoding # Not present on the OVB deployment
+#    - system-encoding # Not present on the OVB deployment
 #    - ceph-ansible-installed # Not present on the OVB deployment
 #    - haproxy # Not present on the OVB deployment
 #    - no-op-firewall-nova-driver # Not present on the OVB deployment
@@ -161,18 +168,16 @@ validation_catalogue:
 #    - default-node-count
 #    - ironic-boot-configuration
 #    - network-environment
-#    - node-health
 #    - nova-status
+#    - node-health
+#    - node-disks
 #    - stack-health
 #    - switch-vlans
 #    - undercloud-heat-purge-deleted
-#    - undercloud-tokenflush
-#    - validate-selinux
 
 # Real issues detedte by validations but not relevant
 #    - check-rhsm-version
 #    - check-undercloud-conf
-#    - node-disks
 #    - openshift-hw-requirements
 #    - pacemaker-status
 #    - stonith-exists
