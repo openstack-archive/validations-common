@@ -141,7 +141,6 @@ validation_catalogue:
     - undercloud-ipa-server-check
     - undercloud-neutron-sanity-check
     - undercloud-process-count
-    - undercloud-tokenflush
     - validate-selinux
 
 # Following validations are disabled for purposes of catalogue testing
@@ -188,3 +187,5 @@ validation_catalogue:
 #    - undercloud-service-status
 # LP#1959864
 #    - image-serve
+# LP#1994029
+#    - undercloud-tokenflush
