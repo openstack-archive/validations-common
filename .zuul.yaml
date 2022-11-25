@@ -106,6 +106,16 @@
     vars:
       branch_override: stable/train
 
+- job:
+    name: validations-common-openstack-tox-linters-ubuntu-focal
+    nodeset: ubuntu-focal
+    parent: openstack-tox-linters
+
+- job:
+    name: validations-common-openstack-tox-cover-ubuntu-focal
+    nodeset: ubuntu-focal
+    parent: openstack-tox-cover
+
 - project:
     templates:
       - check-requirements
@@ -113,16 +123,16 @@
     check:
       jobs:
         - validations-common-reqcheck
-        - openstack-tox-linters: &tox_override_checkout
+        - validations-common-openstack-tox-linters-ubuntu-focal: &tox_override_checkout
             override-checkout: stable/train
-        - openstack-tox-cover: *tox_override_checkout
+        - validations-common-openstack-tox-cover-ubuntu-focal: *tox_override_checkout
         - openstack-tox-py36: *tox_override_checkout
         - openstack-tox-py37: *tox_override_checkout
         - validations-common-functional-stable
         - tripleo-ci-centos-8-standalone-validation-common-stable:
             dependencies:
-              - openstack-tox-linters
-              - openstack-tox-cover
+              - validations-common-openstack-tox-linters-ubuntu-focal
+              - validations-common-openstack-tox-cover-ubuntu-focal
               - validations-common-functional-stable
         - openstack-tox-docs: &tripleo-docs
             <<: *tox_override_checkout
@@ -132,13 +142,13 @@
               - ^validations_common/.*
     gate:
       jobs:
-        - openstack-tox-linters: *tox_override_checkout
+        - validations-common-openstack-tox-linters-ubuntu-focal: *tox_override_checkout
         - openstack-tox-py36: *tox_override_checkout
         - openstack-tox-py37: *tox_override_checkout
         - validations-common-functional-stable
         - tripleo-ci-centos-8-standalone-validation-common-stable:
             dependencies:
-              - openstack-tox-linters
+              - validations-common-openstack-tox-linters-ubuntu-focal
               - validations-common-functional-stable
         - openstack-tox-docs: *tripleo-docs
     promote:
