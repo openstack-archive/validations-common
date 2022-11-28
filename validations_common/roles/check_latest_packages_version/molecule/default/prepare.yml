@@ -43,8 +43,6 @@
     - name: Generate yum repo
       command: >-
         createrepo /opt/valfrwk/
-      args:
-        warn: false
 
     - name: Add valfrwk yum repository
       yum_repository:
