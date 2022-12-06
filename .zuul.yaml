@@ -116,6 +116,11 @@
     nodeset: ubuntu-focal
     parent: openstack-tox-cover
 
+- job:
+    name: validations-common-openstack-tox-docs-ubuntu-focal
+    nodeset: ubuntu-focal
+    parent: openstack-tox-docs
+
 - project:
     templates:
       - check-requirements
@@ -134,7 +139,7 @@
               - validations-common-openstack-tox-linters-ubuntu-focal
               - validations-common-openstack-tox-cover-ubuntu-focal
               - validations-common-functional-stable
-        - openstack-tox-docs: &tripleo-docs
+        - validations-common-openstack-tox-docs-ubuntu-focal: &tripleo-docs
             <<: *tox_override_checkout
             files:
               - ^doc/.*
@@ -150,11 +155,14 @@
             dependencies:
               - validations-common-openstack-tox-linters-ubuntu-focal
               - validations-common-functional-stable
-        - openstack-tox-docs: *tripleo-docs
+        - validations-common-openstack-tox-docs-ubuntu-focal: *tripleo-docs
     promote:
       jobs:
-        - promote-openstack-tox-docs: *tripleo-docs
-
+        - promote-openstack-tox-docs:
+            files:
+              - ^doc/.*
+              - ^README.rst
+              - ^validations_common/.
 - project-template:
     check:
       jobs:
