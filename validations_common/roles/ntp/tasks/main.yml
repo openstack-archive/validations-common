@@ -1,8 +1,14 @@
 ---
 - name: Get if chrony is enabled
   become: true
-  hiera:
-    name: "chrony_enabled"
+  block:
+    - hiera:
+        name: "chrony_enabled"
+  rescue:
+    - debug:
+        msg: "chrony_enabled key is not present. Assuming chrony is disabled"
+    - set_fact:
+        chrony_enabled: false
 
 - when: chrony_enabled|bool
   block:
