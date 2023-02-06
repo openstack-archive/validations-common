@@ -186,3 +186,82 @@ validation_catalogue:
 #    - tls-everywhere-prep
 #    - undercloud-debug
 #    - undercloud-service-status
+#
+# List of dictionaries for testing 4 different versions of file-to-run the CLI file command
+# Each dictionary consists of different options for inclusion and exclusion
+# validations/groups/categories/products
+test_arguments_run_from_file:
+  # 1st valid file
+  # expected rc is 0
+  - validation:
+      - check-cpu
+    validation_group: []
+    validation_category: []
+    validation_product: []
+    exclude_validation:
+    exclude_validation_group: []
+    exclude_validation_category: []
+    exclude_validation_product:
+      - tripleo
+    validation-dir:
+    extra_vars:
+      minimal_cpu_count: 2
+  # 2nd valid file with 1 non-existent validation
+  # networking group should be run, expected rc is 1 due to the failing
+  # validations
+  - validation:
+      - check-cpu
+      - i-dont-exist
+    validation_group: []
+    validation_category:
+      - compute
+      - networking
+    validation_product: []
+    exclude_validation:
+      - fips-enabled
+    exclude_validation_group:
+      - prep
+    exclude_validation_category:
+      - compute
+    exclude_validation_product:
+      - rabbitmq
+      - tripleo
+    limit_hosts:
+      limit: [undercloud-0]
+  #  3rd valid file testing the Invalid operation: no validation to run
+  #  expected rc is 1
+  - validation:
+      - i-dont-exist
+    validation_group: []
+    validation_category: []
+    validation_product: []
+    exclude_validation:
+      - fips-enabled
+    exclude_validation_group:
+      - prep
+    exclude_validation_category:
+      - compute
+    exclude_validation_product:
+      - rabbitmq
+      - tripleo
+  #  4th valid file, testing the proper inclusion and exclusion
+  #  only networking group should run (except the dns and the ntp validations)
+  # expected rc is 1 due to the failed check-cpu validation
+  - validation:
+      - check-cpu
+    validation_group:
+    validation_category:
+      - networking
+    validation_product:
+      - tripleo
+    exclude_validation:
+      - fips-enabled
+      - dns
+      - ntp
+    exclude_validation_group:
+    exclude_validation_category:
+    exclude_validation_product:
+      - rabbitmq
+      - tripleo
+    extra_vars:
+      minimal_cpu_count: 8000

@@ -39,12 +39,22 @@
 
 - name: Set Validation directory if virtualenv exists
   set_fact:
-    validation_dir: "--validation-dir {{ zuul_work_virtualenv }}/share/ansible/validation-playbooks"
+    validation_dir: "{{ zuul_work_virtualenv }}/share/ansible/validation-playbooks"
   when: is_virtualenv.stat.exists
 
-- name: Set Ansible base directory if virtualenv exists
+- name: Set Validation directory argument if virtualenv exists
   set_fact:
-    ansible_dir: "--ansible-base-dir {{ zuul_work_virtualenv }}/share/ansible/"
+    validation_dir_arg: "--validation-dir {{ validation_dir }}"
+  when: is_virtualenv.stat.exists
+
+- name: Set Ansible base directory path if virtualenv exists
+  set_fact:
+    ansible_dir: "{{ zuul_work_virtualenv }}/share/ansible/"
+  when: is_virtualenv.stat.exists
+
+- name: Set Ansible base directory argument if virtualenv exists
+  set_fact:
+    ansible_dir_arg: "--ansible-base-dir {{ ansible_dir }}"
   when: is_virtualenv.stat.exists
 
 - name: Set commmand without virtualenv
@@ -56,7 +66,22 @@
 
 - name: Set validation dir without virtualenv
   set_fact:
-    validation_dir: "--validation-dir /usr/share/ansible/validation-playbooks"
+    validation_dir: "/usr/share/ansible/validation-playbooks"
+  when: not is_virtualenv.stat.exists
+
+- name: Set validation dir argument without virtualenv
+  set_fact:
+    validation_dir_arg: "--validation-dir {{ validation_dir }}"
+  when: not is_virtualenv.stat.exists
+
+- name: Set Ansible base directory path withnout virtualenv
+  set_fact:
+    ansible_dir: "/usr/share/ansible/"
+  when: not is_virtualenv.stat.exists
+
+- name: Set Ansible base directory argument withnout virtualenv exists
+  set_fact:
+    ansible_dir_arg: "--ansible-base-dir {{ ansible_dir }}"
   when: not is_virtualenv.stat.exists
 
 - name: Set a valid inventory
@@ -167,3 +192,39 @@
 - name: Execute entire validations catalogue
   include_tasks: execute_full_catalogue.yaml
   when: execute_full_vf_catalogue
+
+- debug:
+    msg: "{{ item }}"
+  loop: "{{ test_arguments_run_from_file }}"
+
+- name: Check if the File command is present
+  register: subcommand_list
+  shell:
+    cmd: >-
+      {{ validation_command }} --help
+    executable: /bin/bash
+
+- name: Execute the file command tests
+  block:
+    - name: Copy files to run
+      template:
+        src: './templates/file-template.j2'
+        dest: rendered_file_{{ ansible_loop.index }}.yaml
+        mode: "0644"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+      loop: "{{ test_arguments_run_from_file }}"
+      loop_control:
+        extended: true
+      register: rendered_files
+
+    - name: Run validations from the File
+      include_tasks: file.yaml
+      vars:
+        files: "{{ rendered_files.results | map(attribute='dest') | list }}"
+  when: "'Include and exclude validations by' in subcommand_list.stdout"
+
+- name: Fail if something went wrong
+  fail:
+    msg: "One or more file runs have failed, check the log results for more information."
+  when: files_test_failure | default(False) | bool and "'file' in subcommand_list.stdout"

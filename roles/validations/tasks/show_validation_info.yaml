@@ -2,7 +2,7 @@
 - name: Show Validation - correct id
   register: show_output
   shell:
-    cmd: "{{ validation_command }} show {{ validation_dir }} {{ name.key }} -f json > {{ val_working_dir }}/show.log 2>&1"
+    cmd: "{{ validation_command }} show {{ validation_dir_arg }} {{ name.key }} -f json > {{ val_working_dir }}/show.log 2>&1"
     executable: /bin/bash
 
 # Simulating a typo in the validation name
@@ -11,7 +11,7 @@
     - name: Show validations - incorrect id
       register: show_output_incorrect
       shell:
-        cmd: "{{ validation_command }} show {{ validation_dir }} chuck-cpu -f json 2>&1 | tee {{val_working_dir}}/show_typo.log"
+        cmd: "{{ validation_command }} show {{ validation_dir_arg }} chuck-cpu -f json 2>&1 | tee {{val_working_dir}}/show_typo.log"
         executable: /bin/bash
       ignore_errors: true
     - fail:
@@ -22,7 +22,7 @@
   shell:
     cmd: >-
      {{ validation_command }} show parameter
-     --validation {{ name.key }} {{ validation_dir }}
+     --validation {{ name.key }} {{ validation_dir_arg }}
      --download {{ name.key }}_params.{{ format_type }}
      --format-output {{ format_type }}
     executable: /bin/bash

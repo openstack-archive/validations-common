@@ -7,7 +7,7 @@
   shell:
     cmd: >-
       {{ validation_command }} run --validation {{ validation_catalogue.full_list | join(",") }}
-      {{ validation_dir }} {{ ansible_dir }}
+      {{ validation_dir_arg }} {{ ansible_dir_arg }}
       --inventory {{ inventory }}
       --output-log validation_catalogue_execution.log
       {{ validation_catalogue.extra_args }}

@@ -14,7 +14,7 @@
       shell:
         cmd: >-
           {{ validation_command }} run --validation {{ name.key }}
-          {{ validation_dir }} {{ ansible_dir }}
+          {{ validation_dir_arg }} {{ ansible_dir_arg }}
           --inventory {{ inventory }}
           --output-log validation_{{ name.key }}_positive.log
           {{ execution_extra_args | default(name.value.extra_args) }}

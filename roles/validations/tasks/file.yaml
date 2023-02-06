@@ -1,0 +1,118 @@
+---
+- name: Run validations from the YAML file
+  vars:
+    file_wrong_path: foo/bar.yaml
+    junitxml_path: /home/stack/logs
+    junitxml_wrong_path: /foo/bar
+    wrong_path_string: must be properly formatted
+    wrong_directory_string: No such file or directory
+    junitxml_missing_string: junitxml output disabled
+    validation_failed_string: have failed
+    validation_not_found_string: Following validations were not found
+    no_validation_run_string: No validation has been run
+    expected_result: 1
+  block:
+    - debug:
+        msg: "{{ item }}"
+      loop: "{{ files }}"
+
+    - name: Execute the file command
+      block:
+        - name: Passed validation test
+          ignore_errors: true
+          register: run_results
+          shell:
+            cmd: >-
+              {{ validation_command }} file {{ files[0] }}
+            executable: /bin/bash
+
+        - set_fact:
+            files_test_failure: true
+          when: "{{ run_results.rc }} == 1"
+
+        - name: Failed validation test
+          ignore_errors: true
+          register: run_results
+          shell:
+            cmd: >-
+              {{ validation_command }} file {{ files[3] }}
+            executable: /bin/bash
+
+        - set_fact:
+            files_test_failure: true
+          when: run_results.rc != expected_result
+
+        - name: Run with no executed validation
+          ignore_errors: true
+          register: run_results
+          shell:
+            cmd: >-
+              {{ validation_command }} file {{ files[1] }}
+            executable: /bin/bash
+
+        - set_fact:
+            files_test_failure: true
+          when:
+            - run_results.rc != expected_result
+
+        - name: Run with non-existent validation
+          ignore_errors: true
+          register: run_results
+          shell:
+            cmd: >-
+              {{ validation_command }} file {{ files[2] }}
+            executable: /bin/bash
+
+        - set_fact:
+            files_test_failure: true
+          when:
+            - validation_not_found_string not in run_results.stdout
+            - validation_not_found_string not in run_results.stderr
+
+    - name: Execute the file command with wrong path
+      ignore_errors: true
+      register: run_results
+      shell:
+        cmd: >-
+          {{ validation_command }} file {{ file_wrong_path }}
+        executable: /bin/bash
+
+    - set_fact:
+        files_test_failure: true
+      when:
+        - wrong_path_string not in run_results.stdout
+        - wrong_path_string not in run_results.stderr
+
+    - name: Execute the file command with junitxml output
+      ignore_errors: true
+      register: run_results
+      shell:
+        cmd: >-
+          {{ validation_command }} file {{ files[0] }} --junitxml {{ junitxml_path }}
+        executable: /bin/bash
+
+    - set_fact:
+        files_test_failure: true
+      when:
+        - wrong_directory_string in run_results.stdout
+        - junitxml_missing_string not in run_results.stdout
+        - wrong_directory_string in run_results.stderr
+        - junitxml_missing_string not in run_results.stderr
+        - "{{ run_results.rc }} == 1"
+
+    - name: Execute the file command with wrong Junitxml path
+      ignore_errors: true
+      register: run_results
+      shell:
+        cmd: >-
+          {{ validation_command }} file {{ files[0] }} --junitxml {{ junitxml_wrong_path }}
+        executable: /bin/bash
+
+    - set_fact:
+        files_test_failure: true
+      when:
+        - wrong_directory_string in run_results.stdout
+        - junitxml_missing_string not in run_results.stdout
+        - wrong_directory_string in run_results.stderr
+        - junitxml_missing_string not in run_results.stderr
+        - "{{ run_results.rc }} == 1"

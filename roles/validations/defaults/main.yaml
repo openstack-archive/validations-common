@@ -23,3 +23,5 @@ cli_command: "validation"
 run_validation: true
 execute_full_vf_catalogue: "{{ job.execute_full_vf_catalogue|default(false)|bool }}"
 vf_catalogue_overrides: "{{ ansible_user_dir }}/catalog_vars_override.yaml"
+files_to_run_dest: "{{ ansible_user_dir }}"
+files_test_failure: false
