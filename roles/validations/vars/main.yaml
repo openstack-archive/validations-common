@@ -122,6 +122,7 @@ validation_catalogue:
     - dns
     - fips-enabled
     - healthcheck-service-status
+    - image-serve
     - mysql-open-files-limit
     - neutron-sanity-check
     - no-op
@@ -185,7 +186,3 @@ validation_catalogue:
 #    - tls-everywhere-prep
 #    - undercloud-debug
 #    - undercloud-service-status
-# LP#1959864
-#    - image-serve
-# LP#1994029
-#    - undercloud-tokenflush
