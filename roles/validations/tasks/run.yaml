@@ -26,4 +26,4 @@
     - name: set fact for run_results
       ignore_errors: true
       set_fact: result_failed=true
-      when: run_results.rc != expected_rc
+      when: run_results is defined and run_results.rc is defined and run_results.rc != expected_rc
