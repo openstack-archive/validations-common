@@ -33,30 +33,6 @@
     files:
       - ^requirements.txt$
 
-- job:
-    description: Base validations-common job
-    name: validations-common-centos-8-base
-    nodeset: centos-8-stream
-    parent: base
-    success-url: "reports.html"
-    failure-url: "reports.html"
-    pre-run:
-      - tests/prepare-test-host.yml
-      - playbooks/molecule/pre.yml
-    run:
-      - playbooks/molecule/run.yml
-    timeout: 1800
-    voting: true
-
-- job:
-    name: tripleo-ci-centos-9-standalone-validation-common
-    parent: tripleo-ci-centos-9-standalone
-    vars:
-      featureset: '052'
-      validate_services: true
-      enable_validation: true
-      validation_component: validation
-
 - project:
     templates:
       - check-requirements
@@ -69,13 +45,6 @@
         - openstack-tox-py38
         - openstack-tox-py39
         - validations-common-functional
-        - tripleo-ci-centos-9-standalone-validation-common:
-            vars: &consumer_vars
-              build_container_images: true
-            dependencies:
-              - openstack-tox-linters
-              - openstack-tox-cover
-              - validations-common-functional
         - openstack-tox-docs: &tripleo-docs
             files:
               - ^doc/.*
@@ -88,11 +57,6 @@
         - openstack-tox-py38
         - openstack-tox-py39
         - validations-common-functional
-        - tripleo-ci-centos-9-standalone-validation-common:
-            vars: *consumer_vars
-            dependencies:
-              - openstack-tox-linters
-              - validations-common-functional
         - openstack-tox-docs: *tripleo-docs
     promote:
       jobs:
